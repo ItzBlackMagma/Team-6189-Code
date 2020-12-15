@@ -4,6 +4,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -48,7 +49,6 @@ public class RobotHardware {
     }
 
     public void move(double x, double y, double r, double power){
-        //r *= -1;
 
         double power1 = y + x + r;
         double power2 = y - x - r;
@@ -60,7 +60,6 @@ public class RobotHardware {
         motor3.setPower(power3 * power);
         motor4.setPower(power4 * power);
 
-        //printMotorPowers(power1, power2, power3, power4);
     }
 
     public void translate (double x, double y, double r, double p){
@@ -79,6 +78,16 @@ public class RobotHardware {
 
     }
 
+    public void translate(double x, double y, double r){
+        double angle = getRotation("Z");
+        double x2 = y * Math.tan(angle);
+        double y2 = x / Math.tan(angle);
+
+        double xy = (x2 / y2);
+
+        move(x + x2, y + y2, r, xy);
+    }
+
     public double getRotation(String axis){
         Orientation angles = imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
         switch(axis) {
@@ -93,18 +102,9 @@ public class RobotHardware {
         }
     }
 
-
-    public void printMotorPowers(double p1, double p2, double p3, double p4){
-        telemetry.addData("/> p1", p1);
-        telemetry.addData("/> p2", p2);
-        telemetry.addData("/> p3", p3);
-        telemetry.addData("/> p4", p4);
-        telemetry.update();
-    }
-
     //Set everything up
     public void init(HardwareMap hardwareMap){
-        telemetry.addData("/> ", "Beginning Initialization Process...");
+        telemetry.addData("/> SYSTEM", "Beginning Initialization Process...");
 
         initIMU(hardwareMap);
 
@@ -114,8 +114,8 @@ public class RobotHardware {
 
         //webcamName = hardwareMap.get(WebcamName.class, "robo eye");
 
-        telemetry.addData("/> ", "INIT: Webcam Initialized...");
-        telemetry.addData("/> ", "Initialization Complete");
+        telemetry.addData("/> INIT", "Webcam Initialized...");
+        telemetry.addData("/> SYSTEM", "Initialization Complete");
         telemetry.update();
     }
 
@@ -130,6 +130,8 @@ public class RobotHardware {
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
+
+        telemetry.addData("/> INIT", "Imu Initialized");
 
     }
 
@@ -170,13 +172,13 @@ public class RobotHardware {
         vertical.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         drawback.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        telemetry.addData("/> ", "INIT: Motors Initialized...");
+        telemetry.addData("/> INIT", "Motors Initialized...");
         telemetry.update();
     }
 
     private void initServos(HardwareMap hardwareMap){
         lock = hardwareMap.servo.get("lock");
-        telemetry.addData("/> ", "INIT: Servos Initialized...");
+        telemetry.addData("/> INIT", "Servos Initialized...");
         telemetry.update();
     }
 
