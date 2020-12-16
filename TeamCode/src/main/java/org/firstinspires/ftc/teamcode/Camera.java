@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import android.graphics.Bitmap;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.LastKnown;
 import com.qualcomm.robotcore.util.RobotLog;
 import com.qualcomm.robotcore.util.ThreadPool;
 import com.vuforia.Frame;
@@ -14,6 +15,7 @@ import org.firstinspires.ftc.robotcore.external.function.Consumer;
 import org.firstinspires.ftc.robotcore.external.function.Continuation;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
+import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -37,13 +39,13 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.
 
 public class Camera {
 
-    RobotHardware robot;
-    Telemetry telemetry;
+    private RobotHardware robot;
+    private Telemetry telemetry;
 
-    OpenGLMatrix lastLocation = null;
+    private OpenGLMatrix lastLocation = null;
 
-    int captureCounter = 0;
-    File captureDirectory = AppUtil.ROBOT_DATA_DIR;
+    private int captureCounter = 0;
+    private File captureDirectory = AppUtil.ROBOT_DATA_DIR;
 
     // We use millimeters for accuracy
     float mmPerInch        = 25.4f;
@@ -223,5 +225,26 @@ public class Camera {
                 }
             }
         }));
+    }
+
+    public double getAngle(){ // returns the rotation around just the Z axis
+        return (double) Orientation.getOrientation(lastLocation, AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).thirdAngle;
+    }
+
+    public Orientation getOrientation(){
+        return Orientation.getOrientation(lastLocation, AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
+    }
+
+    public float[] getLocation(){
+        float[] location = lastLocation.getTranslation().getData();
+        return location;
+    }
+
+    public double getX(){
+        return getLocation()[0];
+    }
+
+    public double getY(){
+        return getLocation()[1];
     }
 }

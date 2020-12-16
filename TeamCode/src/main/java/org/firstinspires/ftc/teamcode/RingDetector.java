@@ -26,17 +26,16 @@ public class RingDetector {
     }
 
     public void initTfod(HardwareMap hardwareMap) {
-        telemetry.addData("> ", "Initializing TensorFlow Object Detection...");
+        telemetry.addData("/> ", "Initializing TensorFlow Object Detection...");
 
-        int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
-                "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
+        //int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters();
         tfodParameters.minResultConfidence = 0.8f;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, camera.vuforia);
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
 
-        telemetry.addData("> TFOD", " Loaded Assets...");
-        telemetry.addData("> TFOD", " Creating Instance...");
+        telemetry.addData("/> TFOD", " Loaded Assets...");
+        telemetry.addData("/> TFOD", " Creating Instance...");
 
         if (tfod != null)
             tfod.activate();
@@ -45,7 +44,8 @@ public class RingDetector {
         telemetry.update();
     }
 
-    public void detect(){
+    public int detect(){
+        int stackSize = 0;
         // getUpdatedRecognitions() will return null if no new information is available since the last time that call was made.
         List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
         if (updatedRecognitions != null) {
@@ -58,10 +58,16 @@ public class RingDetector {
                         recognition.getLeft(), recognition.getTop());
                 telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
                         recognition.getRight(), recognition.getBottom());
+                if(recognition.getLabel() == "Single")
+                    stackSize = 1;
+                else if (recognition.getLabel() == "Quad")
+                    stackSize = 4;
             }
             telemetry.update();
         }
         telemetry.update();
+
+        return stackSize;
     }
 
     public void shutdown(){

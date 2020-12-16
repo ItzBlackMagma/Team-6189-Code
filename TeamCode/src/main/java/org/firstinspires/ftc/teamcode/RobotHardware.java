@@ -3,8 +3,6 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -18,6 +16,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 public class RobotHardware {
 
     Telemetry telemetry;
+    Initializer initializer;
     //public OdometryGlobalCoordinatePosition globalPositionUpdate;
 
     //Crossbow module
@@ -46,6 +45,11 @@ public class RobotHardware {
 
     public RobotHardware(Telemetry telemetry) {
         this.telemetry = telemetry;
+        initializer = new Initializer(telemetry, sideways, vertical, drawback, motor1, motor2, motor3, motor4, lock, webcamName, imu);
+    }
+
+    public void init(HardwareMap hardwareMap){
+        initializer.init(hardwareMap);
     }
 
     public void move(double x, double y, double r, double power){
@@ -60,32 +64,19 @@ public class RobotHardware {
         motor3.setPower(power3 * power);
         motor4.setPower(power4 * power);
 
-    }
-
-    public void translate (double x, double y, double r, double p){
-        double angle = getRotation("Z");
-
-        double x1 = x * Math.sin(angle);
-        double y1 = x * Math.cos(angle);
-
-        double x2 = y * Math.sin(angle);
-        double y2 = y * Math.cos(angle);
-
-        double xPower = x1 + x2;
-        double yPower = y1 + y2;
-
-        move(xPower, yPower, r, p);
+        telemetry.addData("/> IMU", getRotation("Z"));
 
     }
 
-    public void translate(double x, double y, double r){
-        double angle = getRotation("Z");
-        double x2 = y * Math.tan(angle);
-        double y2 = x / Math.tan(angle);
+    public void moveToAngle(double angle){
+        if(getRotation("Z") >= 0) {
+            if (getRotation("Z") > angle) {
 
-        double xy = (x2 / y2);
+            }
+            if(getRotation("Z") < angle) {
 
-        move(x + x2, y + y2, r, xy);
+            }
+        }
     }
 
     public double getRotation(String axis){
@@ -102,85 +93,7 @@ public class RobotHardware {
         }
     }
 
-    //Set everything up
-    public void init(HardwareMap hardwareMap){
-        telemetry.addData("/> SYSTEM", "Beginning Initialization Process...");
 
-        initIMU(hardwareMap);
-
-        initChassis(hardwareMap);
-        //initBow(hardwareMap);
-        //initServos(hardwareMap);
-
-        //webcamName = hardwareMap.get(WebcamName.class, "robo eye");
-
-        telemetry.addData("/> INIT", "Webcam Initialized...");
-        telemetry.addData("/> SYSTEM", "Initialization Complete");
-        telemetry.update();
-    }
-
-    private void initIMU(HardwareMap hardwareMap){
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.calibrationDataFile = "BNO055IMUCalibration.json";
-        parameters.loggingEnabled      = true;
-        parameters.loggingTag          = "IMU";
-        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
-
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
-        imu.initialize(parameters);
-
-        telemetry.addData("/> INIT", "Imu Initialized");
-
-    }
-
-    private void initChassis(HardwareMap hardwareMap) {
-        motor1 = hardwareMap.dcMotor.get("motor1");
-        motor2 = hardwareMap.dcMotor.get("motor2");
-        motor3 = hardwareMap.dcMotor.get("motor3");
-        motor4 = hardwareMap.dcMotor.get("motor4");
-
-        motor1.setDirection(DcMotor.Direction.REVERSE);
-        motor2.setDirection(DcMotor.Direction.FORWARD);
-        motor3.setDirection(DcMotor.Direction.FORWARD);
-        motor4.setDirection(DcMotor.Direction.REVERSE);
-
-        motor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motor3.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motor4.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        telemetry.addData("/> INIT", "Chassis Motors Initialized");
-    }
-
-    private void initBow(HardwareMap hardwareMap){
-        sideways = hardwareMap.dcMotor.get("vertical");
-        vertical = hardwareMap.dcMotor.get("horizontal");
-        drawback = hardwareMap.dcMotor.get("drawback");
-
-        sideways.setDirection(DcMotor.Direction.FORWARD);
-        vertical.setDirection(DcMotor.Direction.FORWARD);
-        drawback.setDirection(DcMotor.Direction.FORWARD);
-
-        sideways.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        vertical.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        drawback.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        //encoders
-        sideways.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        vertical.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        drawback.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        telemetry.addData("/> INIT", "Motors Initialized...");
-        telemetry.update();
-    }
-
-    private void initServos(HardwareMap hardwareMap){
-        lock = hardwareMap.servo.get("lock");
-        telemetry.addData("/> INIT", "Servos Initialized...");
-        telemetry.update();
-    }
 
     //public void stopGPS(){ globalPositionUpdate.stop(); }
     
