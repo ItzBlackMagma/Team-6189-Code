@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-@TeleOp(name="Test Opmode", group="test")
+@TeleOp(name="Test Driver Controlled", group="test")
 public class TestControlled extends OpMode {
 
     RobotHardware robot = new RobotHardware(telemetry);
