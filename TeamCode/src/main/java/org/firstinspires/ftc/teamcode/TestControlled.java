@@ -7,10 +7,12 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-@TeleOp(name="Test Opmode", group="test")
+@TeleOp(name="Test Driver Controlled", group="test")
 public class TestControlled extends OpMode {
 
     RobotHardware robot = new RobotHardware(telemetry);
+
+    double speed = .25;
 
     @Override
     public void init() {
@@ -20,11 +22,12 @@ public class TestControlled extends OpMode {
     @Override
     public void loop() {
 
-        robot.move(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, (gamepad1.right_trigger / 2));
-        telemetry.addData("/> X", gamepad1.left_stick_x);
-        telemetry.addData("/> Y", gamepad1.left_stick_y);
-        telemetry.addData("/> R", gamepad1.right_stick_x);
-        telemetry.addData("/> POWER", gamepad1.right_trigger / 2);
+        if (gamepad1.left_trigger > .25)
+            speed = gamepad1.left_trigger;
+        else
+            speed = .25;
+
+        robot.move(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, speed);
         telemetry.update();
     }
 }
