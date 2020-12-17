@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.util.LastKnown;
 import com.qualcomm.robotcore.util.RobotLog;
 import com.qualcomm.robotcore.util.ThreadPool;
 import com.vuforia.Frame;
+import com.vuforia.HINT;
 import com.vuforia.Vuforia;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
@@ -81,6 +82,7 @@ public class Camera {
 
         // Vuforia parameters
         parameters.vuforiaLicenseKey = "AU6DGO3/////AAABmfbaGbX2lU7yobzEFgj/TC95dmC+wGBKUjoXoXSYSiz92D3Y5XU2YY4TlNcgnQLdXr8Pz3zstBN9KHBPTMczwa4QWR0rqGKqC5L3rdvyZM/bFd2v9/YkKpd54Uyl0tX1CyEB9XSW2HKhFjcofvkud19pT1nqEuQBU+Q8zKCJXc8gSycUPELKVARHhsMPOoJMH4wlS7QmwWde4q/nolTJIjolaLvSemiql29GodpyuXfxCyjRKlCLvEZ1GbwhfdDwrPsZM1QBbOJgdnAIGZ00FNf+059bdvUv3SkcfacMRVua/Jp1BWPgkocF3y2PZrBN28s0AGIlbFBMkYSDZ8stGOWDI/a9nM1EXutODEZUGOUd";
+        parameters.useExtendedTracking = false;
         parameters.cameraName = robot.webcamName;
 
         // Instantiate the Vuforia engine
@@ -94,6 +96,7 @@ public class Camera {
 
         // Load the data sets for the tracking pictures
         VuforiaTrackables targets = vuforia.loadTrackablesFromAsset("UltimateGoal");
+        Vuforia.setHint(HINT.HINT_MAX_SIMULTANEOUS_IMAGE_TARGETS, 4);
 
         VuforiaTrackable redWall = targets.get(2); // image 3
         redWall.setName("RedWall");
