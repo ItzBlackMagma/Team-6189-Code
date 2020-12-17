@@ -63,13 +63,13 @@ public class RobotHardware {
     }
 
     public void moveToAngle(double angle){
-        if(getRotation("Z") >= 0) {
-            if (getRotation("Z") > angle) {
+        double currentAngle = getRotation("Z");
+        double deltaAngle = angle - currentAngle;
 
-            }
-            if(getRotation("Z") < angle) {
-
-            }
+        if (deltaAngle > 0) {
+            move(0,0,1, .5);
+        } else if (deltaAngle < 0) {
+            move(0,0,-1, .5);
         }
     }
 
