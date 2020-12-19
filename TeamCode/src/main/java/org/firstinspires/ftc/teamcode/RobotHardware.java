@@ -18,6 +18,8 @@ public class RobotHardware {
     Telemetry telemetry;
     //public OdometryGlobalCoordinatePosition globalPositionUpdate;
 
+    enum StartPosition { RED_WALL, RED_MID, BLUE_WALL, BLUE_MID }
+
     //Crossbow module
     public DcMotor sideways, vertical, drawback;
     public DcMotor motor1,motor2,motor3,motor4; //starts with left front and moves clockwise
@@ -26,6 +28,9 @@ public class RobotHardware {
     public double robotX;
     public double robotY;
     public double robotAngle;
+
+    public boolean atAngle = false;
+    public boolean atPoint = false;
 
     public Servo lock;
 
@@ -62,15 +67,55 @@ public class RobotHardware {
 
     }
 
-    public void moveToAngle(double angle){
+    public void moveToPoint(double x, double y, double power, double error){
+        double deltaX = x - robotX;
+        double deltaY = y - robotY;
+
+        boolean atX = false;
+        boolean atY = false;
+
+        if (deltaX > error) {
+            move(1, 0, 0, power);
+        } if (deltaX < -error) {
+            move(-1, 0, 0, power);
+        } else {
+            atX = true;
+        }
+
+        if (deltaY > error) {
+            move(0, 1, 0, power);
+        } if (deltaY < -error) {
+            move(0, -1, 0, power);
+        } else {
+            atY = true;
+        }
+
+
+        if (atX && atY)
+            atPoint = true;
+    }
+
+
+    public double getPowerToAngle(double angle){
         double currentAngle = getRotation("Z");
         double deltaAngle = angle - currentAngle;
 
         if (deltaAngle > 0) {
-            move(0,0,1, .5);
+            atAngle = false;
+            return 1.0;
         } else if (deltaAngle < 0) {
-            move(0,0,-1, .5);
+            atAngle = false;
+            return -1.0;
+        } else {
+            atAngle = true;
+            return 0;
         }
+
+    }
+
+    public double getAngleToPoint(double pointX, double pointY){
+        double desiredAngle = Math.atan2(pointX - robotX, pointY - robotY);
+        return getPowerToAngle(desiredAngle);
     }
 
     public double getRotation(String axis){
@@ -86,6 +131,18 @@ public class RobotHardware {
                 return 0;
         }
     }
+
+    public Team getTeam(Camera camera){
+        if (robotY > 0){
+            return Team.BLUE;
+        } else {
+            return Team.RED;
+        }
+    }
+
+//    public StartPosition getStartPosition(Camera camera){
+//
+//    }
 
     //Set everything up
     public void init(HardwareMap hardwareMap){

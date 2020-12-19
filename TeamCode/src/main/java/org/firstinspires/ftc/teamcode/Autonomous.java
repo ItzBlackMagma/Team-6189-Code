@@ -10,7 +10,6 @@ public class Autonomous extends LinearOpMode {
     RingDetector detector = new RingDetector(camera, telemetry);
 
     enum StartPosition { RED_WALL, RED_MID, BLUE_WALL, BLUE_MID }
-    enum Team {RED, BLUE}
 
     StartPosition startPos;
     Team team;
@@ -28,11 +27,7 @@ public class Autonomous extends LinearOpMode {
         wait(100);
 
         // get team
-        if (robot.robotY > 0){
-            team = Team.BLUE;
-        } else {
-            team = Team.RED;
-        }
+        team = robot.getTeam(camera);
         
     }
 }
