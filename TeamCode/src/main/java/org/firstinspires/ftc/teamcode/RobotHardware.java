@@ -67,6 +67,10 @@ public class RobotHardware {
 
     }
 
+    public void stop(){
+        move(0,0,0,0);
+    }
+
     public void moveToPoint(double x, double y, double power, double error){
         double deltaX = x - robotX;
         double deltaY = y - robotY;

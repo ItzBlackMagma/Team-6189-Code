@@ -43,7 +43,7 @@ public class TestAuto extends LinearOpMode {
             robot.moveToPoint(camera.quadField, camera.quadField / 2, .5, 1);
         }
 
-        robot.move(0,0,0,0);
+        robot.stop();
 
     }
 
