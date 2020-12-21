@@ -9,7 +9,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
 import java.util.List;
 
-public class RingDetector {
+public class  RingDetector {
 
     public Camera camera;
     public Telemetry telemetry;
