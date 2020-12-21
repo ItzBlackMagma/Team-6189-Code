@@ -95,8 +95,12 @@ public class RobotHardware {
         }
 
 
-        if (atX && atY)
+        if (atX && atY) {
             atPoint = true;
+            stop();
+        }
+
+        telemetry.addData("/> AtPoint", atPoint);
     }
 
 

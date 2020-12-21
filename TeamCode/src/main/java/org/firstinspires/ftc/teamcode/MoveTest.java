@@ -27,7 +27,20 @@ public class MoveTest extends OpMode {
             speed = .25;
         }
 
-        robot.move(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x, speed);
+        //
+
+        robot.moveToPoint(gamepad1.left_stick_x, gamepad1.left_stick_y, speed, 1);
+
+        if(gamepad1.right_bumper)
+            translate = false;
+        if(gamepad1.left_bumper)
+            translate = true;
+
+        if(translate)
+            robot.moveToPoint(gamepad1.left_stick_x * 2, gamepad1.left_stick_y * 2, speed, 1);
+        else
+            robot.move(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x, speed);
+
 
     }
 }
