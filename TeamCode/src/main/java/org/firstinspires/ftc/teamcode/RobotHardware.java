@@ -128,7 +128,7 @@ public class RobotHardware {
 
     public double getAngleToPoint(double pointX, double pointY){ // takes in inches
         double desiredAngle = Math.atan2(pointX - robotX, pointY - robotY);
-        return getPowerToAngle(desiredAngle);
+        return desiredAngle;
     }
 
     public double getRotation(String axis){
@@ -157,6 +157,31 @@ public class RobotHardware {
         rightSpin.setPower(power);
         leftSpin.setPower(power);
     }
+
+    public double calculateUp(double[] pos){
+        double x = pos[0];
+        double y = pos[1];
+        double z = pos[2];
+
+        double distance = Math.hypot(x - robotX, y - robotY);
+        double upAngle = Math.atan2(z, distance);
+
+        return upAngle;
+    }
+
+    public void aim(double[] pos, boolean rotate){
+        double upAngle = calculateUp(pos);
+        double sideAngle = getAngleToPoint(pos[0], pos[1]);
+
+        if(rotate)
+            move(0, 0, getPowerToAngle(sideAngle), 0.75);
+
+        // vertical.setPower();
+
+        telemetry.addData("/> SYSTEM", "AIMBOT IS RUNNING");
+
+    }
+
 
     //Set everything up
     public void init(HardwareMap hardwareMap){
