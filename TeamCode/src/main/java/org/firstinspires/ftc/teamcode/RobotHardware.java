@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -18,16 +19,12 @@ public class RobotHardware {
     Telemetry telemetry;
     //public OdometryGlobalCoordinatePosition globalPositionUpdate;
 
-    enum StartPosition { RED_WALL, RED_MID, BLUE_WALL, BLUE_MID }
-
     //Crossbow module
-    public DcMotor sideways, vertical, drawback;
+    public DcMotor sideways, vertical, drawback, leftSpin, rightSpin;
     public DcMotor motor1,motor2,motor3,motor4; //starts with left front and moves clockwise
     //public DcMotor verticalLeft, verticalRight, horizontal; //Odometry motors
 
-    public double robotX;
-    public double robotY;
-    public double robotAngle;
+    public double robotX, robotY, robotAngle;
 
     public boolean atAngle = false;
     public boolean atPoint = false;
@@ -40,12 +37,9 @@ public class RobotHardware {
     public BNO055IMU imu;
 
     // We use millimeters for accuracy
-    public final float mmPerInch        = 25.4f;
-    public final float mmBotWidth       = 18 * mmPerInch;            // ... or whatever is right for your robot
-    public final float mmFTCFieldWidth  = (12 * 12 - 2) * mmPerInch;   // the FTC field is ~11'10" center-to-center of the glass panels
-    public final double COUNTS_PER_INCH = (double) mmPerInch * 5; // calculate this with a real number
+    public final double COUNTS_PER_INCH = Locations.mmPerInch * 5; // calculate this with a real number
     public final double COUNTS_PER_REV = COUNTS_PER_INCH;
-    public double launchHeight = mmPerInch * 18;
+    public double launchHeight = Locations.mmPerInch * 18;
 
     public RobotHardware(Telemetry telemetry) {
         this.telemetry = telemetry;
@@ -71,7 +65,7 @@ public class RobotHardware {
         move(0,0,0,0);
     }
 
-    public void moveToPoint(double x, double y, double power, double error){
+    public void moveToPoint(double x, double y, double r, double power, double error){ // takes in inches
         double deltaX = x - robotX;
         double deltaY = y - robotY;
 
@@ -79,17 +73,17 @@ public class RobotHardware {
         boolean atY = false;
 
         if (deltaX > error) {
-            move(1, 0, 0, power);
+            move(1, 0, r, power);
         } if (deltaX < -error) {
-            move(-1, 0, 0, power);
+            move(-1, 0, r, power);
         } else {
             atX = true;
         }
 
         if (deltaY > error) {
-            move(0, 1, 0, power);
+            move(0, 1, r, power);
         } if (deltaY < -error) {
-            move(0, -1, 0, power);
+            move(0, -1, r, power);
         } else {
             atY = true;
         }
@@ -101,6 +95,17 @@ public class RobotHardware {
         }
 
         telemetry.addData("/> AtPoint", atPoint);
+    }
+
+    public void moveToPoint(double x, double y, double power, double error) { // takes in inches
+        moveToPoint(x, y, power, error );
+    }
+
+    public void autoToPoint(double x, double y, double power, double error, boolean opModeIsActive){ // specifically for autonomous period
+        atPoint = false;
+        while (!atPoint && opModeIsActive){
+            moveToPoint(x, y, power, error);
+        }
     }
 
 
@@ -121,7 +126,7 @@ public class RobotHardware {
 
     }
 
-    public double getAngleToPoint(double pointX, double pointY){
+    public double getAngleToPoint(double pointX, double pointY){ // takes in inches
         double desiredAngle = Math.atan2(pointX - robotX, pointY - robotY);
         return getPowerToAngle(desiredAngle);
     }
@@ -148,9 +153,10 @@ public class RobotHardware {
         }
     }
 
-//    public StartPosition getStartPosition(Camera camera){
-//
-//    }
+    public void setLaunchPower(double power){
+        rightSpin.setPower(power);
+        leftSpin.setPower(power);
+    }
 
     //Set everything up
     public void init(HardwareMap hardwareMap){
@@ -159,6 +165,8 @@ public class RobotHardware {
         initIMU(hardwareMap);
 
         initChassis(hardwareMap);
+        initLauncher(hardwareMap);
+
         //initBow(hardwareMap);
         //initServos(hardwareMap);
 
@@ -183,6 +191,14 @@ public class RobotHardware {
 
         telemetry.addData("/> INIT", "Imu Initialized");
 
+    }
+
+    private void initLauncher(HardwareMap hardwareMap){
+        leftSpin = hardwareMap.dcMotor.get("left spin");
+        rightSpin = hardwareMap.dcMotor.get("right spin");
+
+        rightSpin.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftSpin.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 
     private void initChassis(HardwareMap hardwareMap) {

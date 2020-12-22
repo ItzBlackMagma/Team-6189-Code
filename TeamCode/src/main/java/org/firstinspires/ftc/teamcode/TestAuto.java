@@ -39,12 +39,18 @@ public class TestAuto extends LinearOpMode {
 
         waitForStart();
         // run phase
+        robot.autoToPoint(camera.quadField, camera.quadField / 2, .5, 1, opModeIsActive());
+        while (!robot.atPoint) {
+            robot.moveToPoint(camera.quadField, camera.quadField / 2, .5, 1);
+        }
+
+        robot.atPoint = false;
+
         while (!robot.atPoint) {
             robot.moveToPoint(camera.quadField, camera.quadField / 2, .5, 1);
         }
 
         robot.stop();
-
     }
 
 }
