@@ -37,18 +37,25 @@ public class TestAuto extends LinearOpMode {
                 break;
         }
 
+        int stackSize = detector.detect();
+
         waitForStart();
         // run phase
         robot.autoToPoint(camera.quadField, camera.quadField / 2, .5, 1, opModeIsActive());
-        while (!robot.atPoint) {
-            robot.moveToPoint(camera.quadField, camera.quadField / 2, .5, 1);
+
+        switch (stackSize){
+            case 0:
+                robot.autoToPoint(Locations.TARGET_ZONE_A[0], Locations.TARGET_ZONE_A[1], 0.75, 1, opModeIsActive());
+                break;
+            case 1:
+                robot.autoToPoint(Locations.TARGET_ZONE_B[0], Locations.TARGET_ZONE_A[1], 0.75, 1, opModeIsActive());
+                break;
+            case 4:
+                robot.autoToPoint(Locations.TARGET_ZONE_C[0], Locations.TARGET_ZONE_A[1], 0.75, 1, opModeIsActive());
+                break;
         }
 
-        robot.atPoint = false;
 
-        while (!robot.atPoint) {
-            robot.moveToPoint(camera.quadField, camera.quadField / 2, .5, 1);
-        }
 
         robot.stop();
     }
