@@ -98,7 +98,7 @@ public class RobotHardware {
     }
 
     public void moveToPoint(double x, double y, double power, double error) { // takes in inches
-        moveToPoint(x, y, power, error );
+        moveToPoint(x, y, power, error);
     }
 
     public void autoToPoint(double x, double y, double power, double error, boolean opModeIsActive){ // specifically for autonomous period
@@ -158,9 +158,9 @@ public class RobotHardware {
         leftSpin.setPower(power);
     }
 
-    public double calculateUp(double[] pos){
+    public double calculateUp(double[] pos, int inv){
         double x = pos[0];
-        double y = pos[1];
+        double y = pos[1] * inv;
         double z = pos[2];
 
         double distance = Math.hypot(x - robotX, y - robotY);
@@ -169,9 +169,9 @@ public class RobotHardware {
         return upAngle;
     }
 
-    public void aim(double[] pos, boolean rotate){
-        double upAngle = calculateUp(pos);
-        double sideAngle = getAngleToPoint(pos[0], pos[1]);
+    public void aim(double[] pos, int inv, boolean rotate){
+        double upAngle = calculateUp(pos, inv);
+        double sideAngle = getAngleToPoint(pos[0], pos[1] * inv);
 
         if(rotate)
             move(0, 0, getPowerToAngle(sideAngle), 0.75);
@@ -182,6 +182,16 @@ public class RobotHardware {
 
     }
 
+    public int getInvFromTeam(Team team){
+        switch (team){
+            case RED:
+                return -1;
+            case BLUE:
+                return 1;
+            default:
+                return 0;
+        }
+    }
 
     //Set everything up
     public void init(HardwareMap hardwareMap){
