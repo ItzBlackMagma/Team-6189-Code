@@ -2,10 +2,10 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -20,16 +20,17 @@ public class RobotHardware {
     //public OdometryGlobalCoordinatePosition globalPositionUpdate;
 
     //Crossbow module
-    public DcMotor sideways, vertical, drawback, leftSpin, rightSpin;
+    public DcMotor sideways, vertical, drawback, loader, rightSpin, wobbleLift;
     public DcMotor motor1,motor2,motor3,motor4; //starts with left front and moves clockwise
     //public DcMotor verticalLeft, verticalRight, horizontal; //Odometry motors
 
     public double robotX, robotY, robotAngle;
+    public double maxWobbleHeight, minWobbleHeight, currentWobbleHeight;
 
     public boolean atAngle = false;
     public boolean atPoint = false;
 
-    public Servo lock;
+    public CRServo lock;
 
     //Chassis module
     public WebcamName webcamName;
@@ -155,7 +156,10 @@ public class RobotHardware {
 
     public void setLaunchPower(double power){
         rightSpin.setPower(power);
-        leftSpin.setPower(power);
+    }
+
+    public void setLoadPower(double power){
+        loader.setPower(power);
     }
 
     public double calculateUp(double[] pos, int inv){
@@ -193,6 +197,14 @@ public class RobotHardware {
         }
     }
 
+    public void liftWobble(double power){
+        currentWobbleHeight = wobbleLift.getCurrentPosition();
+      //  if(currentWobbleHeight <= maxWobbleHeight && currentWobbleHeight >= minWobbleHeight)
+            wobbleLift.setPower(-power);
+        telemetry.addData("/> WOBBLE", currentWobbleHeight);
+        telemetry.update();
+    }
+
     //Set everything up
     public void init(HardwareMap hardwareMap){
         telemetry.addData("/> SYSTEM", "Beginning Initialization Process...");
@@ -201,11 +213,12 @@ public class RobotHardware {
 
         initChassis(hardwareMap);
         initLauncher(hardwareMap);
+        initWobbleLift(hardwareMap);
 
         //initBow(hardwareMap);
         //initServos(hardwareMap);
 
-        //webcamName = hardwareMap.get(WebcamName.class, "robo eye");
+        webcamName = hardwareMap.get(WebcamName.class, "robo eye");
 
         telemetry.addData("/> INIT", "Webcam Initialized...");
         telemetry.addData("/> SYSTEM", "Initialization Complete");
@@ -228,12 +241,24 @@ public class RobotHardware {
 
     }
 
+    private void initWobbleLift(HardwareMap hardwareMap){
+        wobbleLift = hardwareMap.dcMotor.get("wobble");
+        wobbleLift.setDirection(DcMotorSimple.Direction.FORWARD);
+        wobbleLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        wobbleLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        wobbleLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        lock = hardwareMap.crservo.get("lock");
+        lock.setDirection(DcMotorSimple.Direction.FORWARD);
+    }
+
     private void initLauncher(HardwareMap hardwareMap){
-        leftSpin = hardwareMap.dcMotor.get("left spin");
+        loader = hardwareMap.dcMotor.get("loader");
         rightSpin = hardwareMap.dcMotor.get("right spin");
 
-        rightSpin.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftSpin.setDirection(DcMotorSimple.Direction.FORWARD);
+        rightSpin.setDirection(DcMotorSimple.Direction.FORWARD);
+        loader.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 
     private void initChassis(HardwareMap hardwareMap) {
@@ -277,12 +302,13 @@ public class RobotHardware {
         telemetry.update();
     }
 
+    /**
     private void initServos(HardwareMap hardwareMap){
         lock = hardwareMap.servo.get("lock");
         telemetry.addData("/> INIT", "Servos Initialized...");
         telemetry.update();
     }
-
+    **/
     //public void stopGPS(){ globalPositionUpdate.stop(); }
     
 }

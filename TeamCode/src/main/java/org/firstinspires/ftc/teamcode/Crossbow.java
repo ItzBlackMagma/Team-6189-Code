@@ -80,10 +80,11 @@ public class Crossbow {
         robot.drawback.setPower(0);
     }
 
-    public void lock(){ robot.lock.setPosition(1); }
+    public void lock(){ //robot.lock.setPosition(1);
+         }
 
     public void fire(){
-        robot.lock.setPosition(-1);
+      //  robot.lock.setPosition(-1);
     }
 //
 //    public double calculateUp(double[] target){

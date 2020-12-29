@@ -41,7 +41,14 @@ public class MoveTest extends OpMode {
         else
             robot.move(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x, speed);
 
-        robot.setLaunchPower(gamepad1.left_trigger);
+        robot.setLaunchPower(gamepad2.left_trigger);
+        robot.setLoadPower(gamepad2.right_stick_y);
+
+        robot.liftWobble(gamepad2.left_stick_y);
+
+        telemetry.addData("/> WOBBLE POS", robot.wobbleLift.getCurrentPosition());
+
+        robot.lock.setPower(gamepad2.left_stick_x);
 
     }
 }
