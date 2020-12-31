@@ -67,39 +67,43 @@ public class RobotHardware {
     }
 
     public void moveToPoint(double x, double y, double r, double power, double error){ // takes in inches
+        double xPow,yPow;
+
         double deltaX = x - robotX;
         double deltaY = y - robotY;
 
         boolean atX = false;
         boolean atY = false;
 
-        if (deltaX > error) {
-            move(1, 0, r, power);
-        } if (deltaX < -error) {
-            move(-1, 0, r, power);
+        if (deltaX >= error) {
+            xPow = 1;
+        } else if (deltaX <= -error) {
+            xPow = -1;
         } else {
+            xPow = 0;
             atX = true;
         }
 
-        if (deltaY > error) {
-            move(0, 1, r, power);
-        } if (deltaY < -error) {
-            move(0, -1, r, power);
+        if (deltaY >= error) {
+            yPow = 1;
+        } else if (deltaY <= -error) {
+            yPow = -1;
         } else {
+            yPow = 0;
             atY = true;
         }
 
 
         if (atX && atY) {
             atPoint = true;
-            move(0,0,r,1);
         }
 
-        telemetry.addData("/> AtPoint", atPoint);
+        move(xPow, yPow, r, power);
+        telemetry.addData("/> AtPoint  XY (" + x + ", " + y + ")", atPoint);
     }
 
     public void moveToPoint(double x, double y, double power, double error) { // takes in inches
-        moveToPoint(x, y, power, error);
+        moveToPoint(x, y, 0, power, error);
     }
 
     public void autoToPoint(double x, double y, double power, double error, boolean opModeIsActive){ // specifically for autonomous period
@@ -128,8 +132,7 @@ public class RobotHardware {
     }
 
     public double getAngleToPoint(double pointX, double pointY){ // takes in inches
-        double desiredAngle = Math.atan2(pointX - robotX, pointY - robotY);
-        return desiredAngle;
+        return Math.atan2(pointX - robotX, pointY - robotY);
     }
 
     public double getRotation(String axis){
@@ -168,9 +171,7 @@ public class RobotHardware {
         double z = pos[2];
 
         double distance = Math.hypot(x - robotX, y - robotY);
-        double upAngle = Math.atan2(z, distance);
-
-        return upAngle;
+        return Math.atan2(z, distance); // up angle
     }
 
     public void aim(double[] pos, int inv, boolean rotate){
@@ -302,13 +303,13 @@ public class RobotHardware {
         telemetry.update();
     }
 
-    /**
+    /*
     private void initServos(HardwareMap hardwareMap){
         lock = hardwareMap.servo.get("lock");
         telemetry.addData("/> INIT", "Servos Initialized...");
         telemetry.update();
     }
-    **/
+    */
     //public void stopGPS(){ globalPositionUpdate.stop(); }
     
 }

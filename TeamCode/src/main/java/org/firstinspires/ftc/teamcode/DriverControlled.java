@@ -10,7 +10,7 @@ public class DriverControlled extends OpMode {
     Camera camera = new Camera(robot);
     RingDetector detector = new RingDetector(camera, telemetry);
 
-    int inv = 1;
+    int inv = 1, stackSize;
     double[] target;
     double x, y, r, speed;
     boolean manualRotate = false;
@@ -24,11 +24,15 @@ public class DriverControlled extends OpMode {
     @Override
     public void init() {
         robot.init(hardwareMap);
+        camera.activate(hardwareMap);
+        detector.initTfod(hardwareMap);
         inv = robot.getInvFromTeam(robot.getTeam(camera));
     }
 
     @Override
     public void loop() {
+        camera.track();
+        stackSize = detector.detect();
 
         // set speed
         if (gamepad1.right_trigger > 0.25)
