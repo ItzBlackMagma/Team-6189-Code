@@ -92,7 +92,7 @@ public class RobotHardware {
 
         if (atX && atY) {
             atPoint = true;
-            stop();
+            move(0,0,r,1);
         }
 
         telemetry.addData("/> AtPoint", atPoint);
@@ -257,7 +257,7 @@ public class RobotHardware {
         loader = hardwareMap.dcMotor.get("loader");
         rightSpin = hardwareMap.dcMotor.get("right spin");
 
-        rightSpin.setDirection(DcMotorSimple.Direction.FORWARD);
+        rightSpin.setDirection(DcMotorSimple.Direction.REVERSE);
         loader.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 

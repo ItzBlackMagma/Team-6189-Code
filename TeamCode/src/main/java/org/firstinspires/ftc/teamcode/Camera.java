@@ -140,7 +140,7 @@ public class Camera {
 
         // Now we put the location of the camera on the robot
         OpenGLMatrix robotFromCamera = OpenGLMatrix
-                .translation(mmBotWidth/2,0,0)
+                .translation(9, -6.5f,3.5f)
                 .multiplied(Orientation.getRotationMatrix(AxesReference.EXTRINSIC, AxesOrder.XZY,
                         AngleUnit.DEGREES, 90, 90, 0));
 

@@ -11,6 +11,9 @@ import org.firstinspires.ftc.teamcode.RobotHardware;
 public class MoveTest extends OpMode {
 
     RobotHardware robot = new RobotHardware(telemetry);
+    Camera camera = new Camera(robot);
+    RingDetector detector = new RingDetector(camera, telemetry);
+
 
     double speed;
     boolean translate = false;
@@ -18,10 +21,15 @@ public class MoveTest extends OpMode {
     @Override
     public void init() {
         robot.init(hardwareMap);
+        camera.activate(hardwareMap);
+        detector.initTfod(hardwareMap);
     }
 
     @Override
     public void loop() {
+
+        camera.track();
+        detector.detect();
 
         if (gamepad1.right_trigger > .25) {
             speed = gamepad1.right_trigger;
@@ -34,12 +42,13 @@ public class MoveTest extends OpMode {
         if(gamepad1.left_bumper)
             translate = true;
 
-        if(translate)
-            robot.moveToPoint( robot.robotX + (gamepad1.left_stick_x * 2),
-                               robot.robotY + (-gamepad1.left_stick_y * 2),
-                                  gamepad1.right_stick_x, speed, 1);
-        else
+        if(translate) {
+            robot.moveToPoint(robot.robotX + (gamepad1.left_stick_x * 2),
+                    robot.robotY + (-gamepad1.left_stick_y * 2),
+                    gamepad1.right_stick_x, speed, 0.1);
+        } else {
             robot.move(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x, speed);
+        }
 
         robot.setLaunchPower(gamepad2.left_trigger);
         robot.setLoadPower(gamepad2.right_stick_y);
@@ -49,6 +58,8 @@ public class MoveTest extends OpMode {
         telemetry.addData("/> WOBBLE POS", robot.wobbleLift.getCurrentPosition());
 
         robot.lock.setPower(gamepad2.left_stick_x);
+
+        telemetry.addData("/> ROBOT_POS", robot.robotX + "       " + robot.robotY);
 
     }
 }
