@@ -16,7 +16,8 @@ public class MoveTest extends OpMode {
     Camera camera = new Camera(robot);
     RingDetector detector = new RingDetector(camera, telemetry);
 
-
+    int inv = 1, stackSize;
+    double[] target;
     double speed;
     boolean translate = false;
 
@@ -31,7 +32,7 @@ public class MoveTest extends OpMode {
     public void loop() {
 
         camera.track();
-        detector.detect();
+        stackSize = detector.detect();
 
         // Speed control
         if (gamepad1.right_trigger > .25) {

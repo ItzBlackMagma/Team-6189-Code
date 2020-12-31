@@ -36,17 +36,17 @@ public class TestAuto extends LinearOpMode {
         // moves to the correct wobble goal zone
         switch (stackSize){
             case 0:
-                robot.autoToPoint(Locations.TARGET_ZONE_A[0], Locations.TARGET_ZONE_A[1] * inv, 0.75, 1, opModeIsActive());
+                robot.autoToPoint(Locations.TARGET_ZONE_A[0], Locations.TARGET_ZONE_A[1] * inv, 0.75, 1, opModeIsActive(), camera);
                 break;
             case 1:
-                robot.autoToPoint(Locations.TARGET_ZONE_B[0], Locations.TARGET_ZONE_A[1] * inv, 0.75, 1, opModeIsActive());
+                robot.autoToPoint(Locations.TARGET_ZONE_B[0], Locations.TARGET_ZONE_A[1] * inv, 0.75, 1, opModeIsActive(), camera);
                 break;
             case 4:
-                robot.autoToPoint(Locations.TARGET_ZONE_C[0], Locations.TARGET_ZONE_A[1] * inv, 0.75, 1, opModeIsActive());
+                robot.autoToPoint(Locations.TARGET_ZONE_C[0], Locations.TARGET_ZONE_A[1] * inv, 0.75, 1, opModeIsActive(), camera);
                 break;
         }
 
-        robot.autoToPoint(Locations.LAUNCH_LINE - 20, (Locations.inFTCHalfField / 2) * inv, 0.75, 1, opModeIsActive());
+        robot.autoToPoint(Locations.LAUNCH_LINE - 20, (Locations.inFTCHalfField / 2) * inv, 0.75, 1, opModeIsActive(), camera);
 
         for(int i = 1; i < Locations.TARGETS.length; i++){
             robot.setLaunchPower(0);
@@ -56,7 +56,7 @@ public class TestAuto extends LinearOpMode {
             sleep(1000);
         }
 
-        robot.autoToPoint(Locations.LAUNCH_LINE, (Locations.inFTCHalfField / 2) * inv, 0.75, 1, opModeIsActive());
+        robot.autoToPoint(Locations.LAUNCH_LINE, (Locations.inFTCHalfField / 2) * inv, 0.75, 1, opModeIsActive(), camera);
 
         robot.stop();
     }

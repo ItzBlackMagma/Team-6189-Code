@@ -140,10 +140,12 @@ public class RobotHardware {
      * @param power The speed control to easily adjust how fast the robot will move
      * @param error The radius of error. How accurate the robot needs to be when moving to the specified point.
      * @param opModeIsActive Checks to see if the opmode was deactivated so the robot doesn't continue running if we don't want it to.
+     * @param camera Uses the camera object to update the position of the robot
      */
-    public void autoToPoint(double x, double y, double power, double error, boolean opModeIsActive){
+    public void autoToPoint(double x, double y, double power, double error, boolean opModeIsActive, Camera camera){
         atPoint = false;
         while (!atPoint && opModeIsActive){
+            camera.track();
             moveToPoint(x, y, power, error);
         }
         stop();
