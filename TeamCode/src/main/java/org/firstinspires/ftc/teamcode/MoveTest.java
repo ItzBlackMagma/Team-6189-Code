@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.os.PowerManager;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -31,17 +33,20 @@ public class MoveTest extends OpMode {
         camera.track();
         detector.detect();
 
+        // Speed control
         if (gamepad1.right_trigger > .25) {
             speed = gamepad1.right_trigger;
         } else {
             speed = .25;
         }
 
+        // Movement mode control
         if(gamepad1.right_bumper)
             translate = false;
         if(gamepad1.left_bumper)
             translate = true;
 
+        // game pad 1 controls (movement)
         if(translate) {
             robot.moveToPoint(robot.robotX + (gamepad1.left_stick_x * 2),
                     robot.robotY + (-gamepad1.left_stick_y * 2),
@@ -50,16 +55,20 @@ public class MoveTest extends OpMode {
             robot.move(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x, speed);
         }
 
+        // game pad 2 controls (scoring)
         robot.setLaunchPower(gamepad2.left_trigger);
         robot.setLoadPower(gamepad2.right_stick_y);
 
         robot.liftWobble(gamepad2.left_stick_y);
-
-        telemetry.addData("/> WOBBLE POS", robot.wobbleLift.getCurrentPosition());
-
         robot.lock.setPower(gamepad2.left_stick_x);
 
-        telemetry.addData("/> ROBOT_POS", robot.robotX + "       " + robot.robotY);
-
+        // Output data
+        telemetry.addData("/> WOBBLE_LIFT_POS", robot.wobbleLift.getCurrentPosition());
+        telemetry.addData("/> ROBOT_POS", camera.getLocation());
+        telemetry.addData("/> IMU", robot.getRotation("Z"));
+        telemetry.update();
     }
+
+    @Override
+    public void stop() {  robot.stop(); camera.deactivate(); detector.shutdown();  }
 }

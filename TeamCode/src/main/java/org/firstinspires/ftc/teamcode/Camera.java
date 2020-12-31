@@ -70,15 +70,14 @@ public class Camera {
     }
 
     public void activate(HardwareMap hardwareMap){
-        telemetry.addData("> ", "Beginning Camera Activation Process...");
-        telemetry.update();
+        telemetry.addData("/> ", "Beginning Camera Activation Process...");
 
         // Camera preview
-        telemetry.addData("> CAMERA", " Checking For Camera Monitor View...");
+        telemetry.addData("/> CAMERA", " Checking For Camera Monitor View...");
         //int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(); // uses no camera preview
 
-        telemetry.addData("> CAMERA", " Camera Monitor View Is Disabled...");
+        telemetry.addData("/> CAMERA", " Camera Monitor View Is Disabled...");
 
         // Vuforia parameters
         parameters.vuforiaLicenseKey = "AU6DGO3/////AAABmfbaGbX2lU7yobzEFgj/TC95dmC+wGBKUjoXoXSYSiz92D3Y5XU2YY4TlNcgnQLdXr8Pz3zstBN9KHBPTMczwa4QWR0rqGKqC5L3rdvyZM/bFd2v9/YkKpd54Uyl0tX1CyEB9XSW2HKhFjcofvkud19pT1nqEuQBU+Q8zKCJXc8gSycUPELKVARHhsMPOoJMH4wlS7QmwWde4q/nolTJIjolaLvSemiql29GodpyuXfxCyjRKlCLvEZ1GbwhfdDwrPsZM1QBbOJgdnAIGZ00FNf+059bdvUv3SkcfacMRVua/Jp1BWPgkocF3y2PZrBN28s0AGIlbFBMkYSDZ8stGOWDI/a9nM1EXutODEZUGOUd";
@@ -157,13 +156,12 @@ public class Camera {
 
         targets.activate();
 
-        telemetry.addData("> CAMERA", " Vuforia Is Now Activated...");
-        telemetry.addData("> ROBOT", "Camera Activation Complete");
-        telemetry.update();
+        telemetry.addData("/> CAMERA", " Vuforia Is Now Activated...");
+        telemetry.addData("/> ROBOT", "Camera Activation Complete");
     }
 
     public void track(){
-        telemetry.addData("> VUFORIA", " Tracking Targets...");
+        telemetry.addData("/> VUFORIA", " Tracking Targets...");
         for (VuforiaTrackable trackable : allTrackables) {
             /**
              * getUpdatedRobotLocation() will return null if no new information is available since
@@ -182,24 +180,23 @@ public class Camera {
          */
         if (lastLocation != null) {
             //  RobotLog.vv(TAG, "robot=%s", format(lastLocation));
-            telemetry.addData("> VUFORIA: Robot Position", format(lastLocation));
+            telemetry.addData("/> VUFORIA: Robot Transform (Orientation & Location)", format(lastLocation));
 
-            robot.robotX = (double) lastLocation.getTranslation().get(0) / mmPerInch;
-            robot.robotY = (double) lastLocation.getTranslation().get(1) / mmPerInch;
+            robot.robotX = (double) lastLocation.getTranslation().get(0) / mmPerInch; // returns inches
+            robot.robotY = (double) lastLocation.getTranslation().get(1) / mmPerInch; // returns inches
             robot.robotAngle = (double) Orientation.getOrientation(lastLocation, AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).thirdAngle; // orientation about the Z (up) axis
 
-            telemetry.addData("> VUFORIA: Robot Location: X, Y, R", robot.robotX + ", " + robot.robotY + ", " + robot.robotAngle);
+            telemetry.addData("/> VUFORIA: Robot Location: X, Y, R", robot.robotX + ", " + robot.robotY + ", " + robot.robotAngle); // returns inches
 
         } else {
-            telemetry.addData("> VUFOIRA ", "Target Not Found: Location Unknown");
+            telemetry.addData("/> VUFOIRA ", "Target Not Found: Location Unknown");
         }
-        telemetry.update();
+        //telemetry.update();
     }
 
     public void deactivate(){
         targets.deactivate();
-        telemetry.addData("> CAMERA", " Vuforia Has Been Deactivated");
-        telemetry.update();
+        telemetry.addData("/> CAMERA", " Vuforia Has Been Deactivated");
     }
 
     public String format(OpenGLMatrix transformationMatrix) {
