@@ -18,7 +18,7 @@ public class MoveTest extends OpMode {
 
     int inv = 1, stackSize;
     double[] target;
-    double speed;
+    double speed, spinPower;
     boolean translate = false;
 
     @Override
@@ -57,7 +57,8 @@ public class MoveTest extends OpMode {
         }
 
         // game pad 2 controls (scoring)
-        robot.setLaunchPower(gamepad2.left_trigger);
+        spinPower = gamepad2.left_trigger;
+        robot.setLaunchPower(spinPower);
         robot.setLoadPower(gamepad2.right_stick_y);
 
         robot.liftWobble(gamepad2.left_stick_y);
@@ -67,6 +68,7 @@ public class MoveTest extends OpMode {
         telemetry.addData("/> WOBBLE_LIFT_POS", robot.wobbleLift.getCurrentPosition());
         telemetry.addData("/> ROBOT_POS", camera.getLocation());
         telemetry.addData("/> IMU", robot.getRotation("Z"));
+        telemetry.addData("/> SPIN POWER", spinPower);
         telemetry.update();
     }
 
