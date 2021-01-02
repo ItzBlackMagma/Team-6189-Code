@@ -30,7 +30,7 @@ public class RobotHardware {
     public boolean atAngle = false;
     public boolean atPoint = false;
 
-    public CRServo lock;
+    public CRServo linear, lock;
 
     //Chassis module
     public WebcamName webcamName;
@@ -86,7 +86,7 @@ public class RobotHardware {
      * @param error The radius of error. How accurate the robot needs to be when moving to the specified point.
      */
     public void moveToPoint(double x, double y, double r, double power, double error){ // takes in inches
-        double xPow,yPow;
+        double xPow = 0, yPow = 0;
 
         double deltaX = x - robotX;
         double deltaY = y - robotY;
@@ -307,6 +307,9 @@ public class RobotHardware {
 
         wobbleLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         wobbleLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        linear = hardwareMap.crservo.get("linear");
+        linear.setDirection(DcMotorSimple.Direction.FORWARD);
 
         lock = hardwareMap.crservo.get("lock");
         lock.setDirection(DcMotorSimple.Direction.FORWARD);

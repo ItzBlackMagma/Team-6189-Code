@@ -43,7 +43,7 @@ public class Camera {
     private RobotHardware robot;
     private Telemetry telemetry;
 
-    private OpenGLMatrix lastLocation = null;
+    private OpenGLMatrix lastLocation = new OpenGLMatrix();
 
     private int captureCounter = 0;
     private File captureDirectory = AppUtil.ROBOT_DATA_DIR;
@@ -236,8 +236,12 @@ public class Camera {
     }
 
     public float[] getLocation(){
-        float[] location = lastLocation.getTranslation().getData();
-        return location;
+        if(lastLocation != null) {
+            float[] location = lastLocation.getTranslation().getData();
+            return location;
+        } else {
+            return null;
+        }
     }
 
     public double getX(){

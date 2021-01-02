@@ -19,13 +19,13 @@ public class CameraTest extends OpMode {
 
     @Override
     public void loop() {
-        //camera.track();
+        camera.track();
         detector.detect();
     }
 
     @Override
     public void stop() {
-        //camera.deactivate();
+        camera.deactivate();
         detector.shutdown();
     }
 }

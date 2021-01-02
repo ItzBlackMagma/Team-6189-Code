@@ -1,13 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.os.PowerManager;
-
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-
-import org.firstinspires.ftc.teamcode.RobotHardware;
 
 @TeleOp(name="Move test")
 public class MoveTest extends OpMode {
@@ -16,9 +10,8 @@ public class MoveTest extends OpMode {
     Camera camera = new Camera(robot);
     RingDetector detector = new RingDetector(camera, telemetry);
 
-    int inv = 1, stackSize;
-    double[] target;
-    double speed, spinPower;
+    int inv = 1, stackSize = 0;
+    double speed = 0, spinPower = 0;
     boolean translate = false;
 
     @Override
@@ -62,11 +55,12 @@ public class MoveTest extends OpMode {
         robot.setLoadPower(gamepad2.right_stick_y);
 
         robot.liftWobble(gamepad2.left_stick_y);
-        robot.lock.setPower(gamepad2.left_stick_x);
+        robot.linear.setPower(gamepad2.left_stick_x);
+        // robot.lock.setPower();
 
         // Output data
         telemetry.addData("/> WOBBLE_LIFT_POS", robot.wobbleLift.getCurrentPosition());
-        telemetry.addData("/> ROBOT_POS", camera.getLocation());
+        telemetry.addData("/> ROBOT_POS", camera.getLocation().toString());
         telemetry.addData("/> IMU", robot.getRotation("Z"));
         telemetry.addData("/> SPIN POWER", spinPower);
         telemetry.update();
