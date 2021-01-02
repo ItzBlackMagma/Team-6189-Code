@@ -10,7 +10,7 @@ public class DriverControlled extends OpMode {
     Camera camera = new Camera(robot);
     RingDetector detector = new RingDetector(camera, telemetry);
 
-    int inv = 1, stackSize;
+    int inv = 1, stackSize, rotateCooldown = 100;
     double[] target;
     double x, y, r, speed;
     boolean manualRotate = false;
@@ -56,10 +56,16 @@ public class DriverControlled extends OpMode {
         }
 
         // figure out whether to rotate freely or aim at target
-        if (gamepad1.a){
-            manualRotate = true;
-        } else if (!gamepad1.a){
-            manualRotate = false;
+        if(rotateCooldown == 100) {
+            if (gamepad1.a) {
+                manualRotate = !manualRotate;
+                rotateCooldown--;
+            }
+        } else {
+            rotateCooldown--;
+            if(rotateCooldown <= 0){
+                rotateCooldown = 100;
+            }
         }
 
         // rotates and aims the robot
