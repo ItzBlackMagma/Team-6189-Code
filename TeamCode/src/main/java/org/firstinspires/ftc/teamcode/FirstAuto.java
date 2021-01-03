@@ -11,7 +11,9 @@ public class FirstAuto extends LinearOpMode {
     private Camera camera = new Camera(robot);
     private RingDetector detector = new RingDetector(camera, telemetry);
 
-    public int stackSize = 0, inv = 1;
+    private int stackSize = 0, inv = 1;
+    private double aimIncCount = 100;
+    private long aimIncTime = 25;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -20,11 +22,19 @@ public class FirstAuto extends LinearOpMode {
         robot.init(hardwareMap);
         camera.activate(hardwareMap);
         detector.initTfod(hardwareMap);
+        telemetry.addData("/> INIT", "Activation complete");
 
-        while (!isStarted() && opModeIsActive()){
+        sleep(1000);
+
+        while ((!isStarted() && opModeIsActive()) || camera.getLocation() == null){
             camera.track();
             stackSize = detector.detect();
             inv = robot.getInvFromTeam(robot.getTeam(camera));
+            telemetry.addData("/> LOCATION", camera.getLocation());
+            telemetry.addData("/> STACK_SIZE", stackSize);
+            telemetry.addData("/> TEAM", robot.getTeam(camera));
+            telemetry.addData("/> INV", inv);
+            telemetry.update();
         }
         waitForStart();
 
@@ -36,6 +46,10 @@ public class FirstAuto extends LinearOpMode {
             robot.move(0,0, robot.getPowerToAngle(robot.getAngleToPoint(Locations.START_STACK[0], Locations.START_STACK[1])), 0.75);
             camera.track();
             stackSize = detector.detect();
+            telemetry.addData("/> LOCATION", camera.getLocation());
+            telemetry.addData("/> STACK_SIZE", stackSize);
+            telemetry.addData("/> IMU", robot.getRotation("Z"));
+            telemetry.update();
         }
 
         sleep(100);
@@ -43,9 +57,10 @@ public class FirstAuto extends LinearOpMode {
         // aim and shoot at power shot targets
         robot.setLaunchPower(1); // insert power shot power
         for(int i=1; i<Locations.TARGETS.length; i++){
-            for(int t=0; t<50; t++) {
+            robot.setLoadPower(0);
+            for(int t = 0; t< aimIncCount; t++) {
                 robot.aim(Locations.TARGETS[i], inv, true);
-                sleep(50);
+                sleep(aimIncTime);
             }
             robot.setLoadPower(1);
             sleep(100);
