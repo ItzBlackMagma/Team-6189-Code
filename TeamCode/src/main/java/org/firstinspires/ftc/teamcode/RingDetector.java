@@ -62,6 +62,8 @@ public class  RingDetector {
                     stackSize = 1;
                 else if (recognition.getLabel() == "Quad")
                     stackSize = 4;
+                else
+                    stackSize = 0;
             }
             telemetry.update();
         }

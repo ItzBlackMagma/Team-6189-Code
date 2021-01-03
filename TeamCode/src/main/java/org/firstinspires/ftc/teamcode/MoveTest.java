@@ -51,12 +51,19 @@ public class MoveTest extends OpMode {
 
         // game pad 2 controls (scoring)
         spinPower = gamepad2.left_trigger;
+        if(gamepad1.x)
+            spinPower = .65;
+        else if(gamepad1.y)
+            spinPower = .75;
+        else if(gamepad1.b);
+            spinPower = .55;
+
         robot.setLaunchPower(spinPower);
         robot.setLoadPower(gamepad2.right_stick_y);
 
         robot.liftWobble(gamepad2.left_stick_y);
         robot.linear.setPower(gamepad2.left_stick_x);
-        // robot.lock.setPower();
+        robot.lock.setPower(gamepad2.right_stick_x);
 
         // Output data
         telemetry.addData("/> WOBBLE_LIFT_POS", robot.wobbleLift.getCurrentPosition());

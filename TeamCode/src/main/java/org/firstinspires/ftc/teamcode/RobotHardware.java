@@ -160,10 +160,10 @@ public class RobotHardware {
         double currentAngle = getRotation("Z");
         double deltaAngle = angle - currentAngle;
 
-        if (deltaAngle > 0) {
+        if (deltaAngle > 0.1) {
             atAngle = false;
             return 1.0;
-        } else if (deltaAngle < 0) {
+        } else if (deltaAngle < -0.1) {
             atAngle = false;
             return -1.0;
         } else {
