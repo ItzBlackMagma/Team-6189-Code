@@ -25,7 +25,7 @@ public class RobotHardware {
     //public DcMotor verticalLeft, verticalRight, horizontal; //Odometry motors
 
     public double robotX, robotY, robotAngle;
-    public double maxWobbleHeight, minWobbleHeight, currentWobbleHeight;
+    public double maxWobbleHeight = 9000, minWobbleHeight = 0, currentWobbleHeight;
 
     public boolean atAngle = false;
     public boolean atPoint = false;
@@ -257,10 +257,19 @@ public class RobotHardware {
         }
     }
 
+
+
     public void liftWobble(double power){
         currentWobbleHeight = wobbleLift.getCurrentPosition();
-      //  if(currentWobbleHeight <= maxWobbleHeight && currentWobbleHeight >= minWobbleHeight)
-            wobbleLift.setPower(-power);
+//        if(currentWobbleHeight >= maxWobbleHeight) {
+//            wobbleLift.setPower(-Math.abs(power));
+//        } else if(currentWobbleHeight <= minWobbleHeight){
+//            wobbleLift.setPower(Math.abs(power));
+//        } else {
+//            wobbleLift.setPower(0);
+//        }
+
+        wobbleLift.setPower(-power);
     }
 
     //Set everything up

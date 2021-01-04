@@ -41,7 +41,6 @@ public class  RingDetector {
             tfod.activate();
 
         telemetry.addData("> ROBOT", "TensorFlow Has Been Initialized");
-        telemetry.update();
     }
 
     public int detect(){
@@ -65,10 +64,7 @@ public class  RingDetector {
                 else
                     stackSize = 0;
             }
-            telemetry.update();
         }
-        telemetry.update();
-
         return stackSize;
     }
 
@@ -76,7 +72,6 @@ public class  RingDetector {
         telemetry.addData("> ROBOT", "Shutting Down TFOD...");
         tfod.shutdown();
         telemetry.addData("> ROBOT", "TFOD Has Been Shut Down");
-        telemetry.update();
     }
 
 
