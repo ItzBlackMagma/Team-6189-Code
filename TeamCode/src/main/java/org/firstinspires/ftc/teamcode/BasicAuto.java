@@ -25,6 +25,9 @@ public class BasicAuto extends LinearOpMode {
         sleep(500);
         robot.stop();
         robot.setLaunchPower(.75);
+        robot.setLoadPower(1);
+        sleep(300);
+        robot.setLoadPower(0);
         sleep(5000);
         robot.setLoadPower(-1);
         sleep(1000);
