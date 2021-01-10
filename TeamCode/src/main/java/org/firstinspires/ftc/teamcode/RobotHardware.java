@@ -216,6 +216,14 @@ public class RobotHardware {
         }
     }
 
+    public void getSpinSpeed(int pos1, int pos2){
+
+    }
+
+    public void setSpinSpeed(int rpm){
+
+    }
+
     public void setLaunchPower(double power){
         rightSpin.setPower(power);
     }

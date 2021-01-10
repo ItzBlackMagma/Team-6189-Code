@@ -10,15 +10,20 @@ public class MoveTest extends OpMode {
     Camera camera = new Camera(robot);
     RingDetector detector = new RingDetector(camera, telemetry);
 
-    int inv = 1, stackSize = 0;
-    double speed = 0, spinPower = 0;
+    PulseCounter counter = new PulseCounter();
+    Thread thread = new Thread(counter);
+
+    int inv = 1, stackSize = 0, counts = 0, lastCounts = 0, deltaCounts = 0;
+    double speed = 0, spinPower = 0, lastTime = time, deltaTime = 0, spinSpeed, CPR = 7;
     boolean translate = false, atPoint = false;
+
 
     @Override
     public void init() {
         robot.init(hardwareMap);
         camera.activate(hardwareMap);
         detector.initTfod(hardwareMap);
+        thread.start();
     }
 
     @Override
@@ -70,16 +75,29 @@ public class MoveTest extends OpMode {
         robot.linear.setPower(gamepad2.left_stick_x);
         robot.lock.setPower(gamepad2.right_stick_x);
 
+        // finds the speed of the spin motor
+        deltaTime = time - lastTime;
+        counts = robot.rightSpin.getCurrentPosition();
+        deltaCounts = counts - lastCounts;
+        spinSpeed = (2 * 3.14 * deltaCounts) / (CPR * deltaTime); // measured in rad/s
+
+
         // Output data
         telemetry.addData("/> WOBBLE_LIFT_POS", robot.wobbleLift.getCurrentPosition());
         telemetry.addData("/> ROBOT_POS X, Y", camera.getX() + ", " + camera.getY());
         telemetry.addData("/> IMU", robot.getRotation("Z"));
         telemetry.addData("/> SPIN POWER", spinPower);
         telemetry.addData("/> TRANSLATE", translate);
+        telemetry.addData("/> DELTA TIME", deltaTime );
+        telemetry.addData("/> DELTA COUNTS", deltaCounts);
+        telemetry.addData("/> SPIN SPEED", spinSpeed);
+
+        lastTime = time;
+        lastCounts = counts;
     }
 
     @Override
-    public void stop() {  robot.stop(); camera.deactivate(); detector.shutdown();  }
+    public void stop() {  robot.stop(); camera.deactivate(); detector.shutdown(); }
 
 
     public void goToPosition(double targetXposition, double targetYposition, double robotPower, double desiredRobotOrientation, double allowableDistanceError){
