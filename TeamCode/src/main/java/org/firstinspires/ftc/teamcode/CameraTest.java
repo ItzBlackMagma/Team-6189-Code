@@ -17,9 +17,10 @@ public class CameraTest extends OpMode {
         detector.initTfod(hardwareMap);
     }
 
+
     @Override
     public void loop() {
-        camera.track();
+        // camera.track();
         detector.detect();
     }
 
