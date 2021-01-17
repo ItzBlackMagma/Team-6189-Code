@@ -38,12 +38,15 @@ public class FirstAuto extends LinearOpMode {
             telemetry.addData("/> INV", inv);
             telemetry.update();
         }
+
+        robot.stop();
         waitForStart();
 
         /*
          *      ******  RUN PHASE ******
          */
 
+        /*
         while (!robot.atAngle) {
             robot.move(0,0, robot.getPowerToAngle(robot.getAngleToPoint(Locations.START_STACK[0], Locations.START_STACK[1])), 0.75);
             camera.track();
@@ -53,89 +56,63 @@ public class FirstAuto extends LinearOpMode {
             telemetry.addData("/> IMU", robot.getRotation("Z"));
             telemetry.update();
         }
-
+        */
+        telemetry.addData("/> LOCATION", camera.getLocation());
+        telemetry.addData("/> STACK_SIZE", stackSize);
+        telemetry.addData("/> IMU", robot.getRotation("Z"));
         sleep(100);
-
-        // aim and shoot at power shot targets
-        robot.setLaunchPower(1); // insert power shot power
-        for(int i=1; i<Locations.TARGETS.length; i++){
-            robot.setLoadPower(0);
-            for(int t = 0; t< aimIncCount; t++) {
-                robot.aim(Locations.TARGETS[i], inv, true);
-                sleep(aimIncTime);
-            }
-            robot.setLoadPower(1);
-            sleep(100);
-        }
 
         // moves to the correct wobble goal zone
         switch (stackSize){
-            case 0:
-                // robot.autoToPoint(Locations.TARGET_ZONE_A[0], Locations.TARGET_ZONE_A[1] * inv, 0.75, 1, opModeIsActive(), camera);
-                goToPosition(Locations.TARGET_ZONE_A[0], Locations.TARGET_ZONE_A[1] * inv, 0.75, robot.getAngleToPoint(Locations.TARGET_ZONE_A[0], Locations.TARGET_ZONE_A[1] * inv), 0.5 );
+            case 0: // Zone A
+                robot.move(0.1, 1, 0, .75);
+                sleep(600);
+                robot.stop();
+                sleep(100);
+                robot.move(-0.1, -1, 0, .75);
+                sleep(400);
+                robot.stop();
                 break;
-            case 1:
-                // robot.autoToPoint(Locations.TARGET_ZONE_B[0], Locations.TARGET_ZONE_A[1] * inv, 0.75, 1, opModeIsActive(), camera);
-                goToPosition(Locations.TARGET_ZONE_B[0], Locations.TARGET_ZONE_B[1] * inv, 0.75, robot.getAngleToPoint(Locations.TARGET_ZONE_B[0], Locations.TARGET_ZONE_B[1] * inv), 0.5 );
+            case 1: // Zone B
+                robot.move(0, 1, 0, .75);
+                sleep(1000);
+                robot.stop();
+                sleep(100);
+                robot.move(0, -1, 0, .75);
+                sleep(800);
+                robot.stop();
                 break;
-            case 4:
-                // robot.autoToPoint(Locations.TARGET_ZONE_C[0], Locations.TARGET_ZONE_A[1] * inv, 0.75, 1, opModeIsActive(), camera);
-                goToPosition(Locations.TARGET_ZONE_C[0], Locations.TARGET_ZONE_C[1] * inv, 0.75, robot.getAngleToPoint(Locations.TARGET_ZONE_C[0], Locations.TARGET_ZONE_C[1] * inv), 0.5 );
+            case 4: // Zone C
+                robot.move(0.1, 1, 0, .75);
+                sleep(1000);
+                robot.stop();
+                sleep(100);
+                robot.move(-0.1, -1, 0, .75);
+                sleep(800);
+                robot.stop();
                 break;
         }
 
-        sleep(100);
+        robot.stop();
+        sleep(1000);
 
-        // robot.autoToPoint(Locations.LAUNCH_LINE, robot.robotY, .75, .5, opModeIsActive(), camera);
-        goToPosition(Locations.LAUNCH_LINE, robot.robotY, .75, 0,  0.5 );
+        // fire rings
+        robot.setLaunchPower(1);
+        sleep(2000);
+        setLoaderPower(1, 400);
+        sleep(2000);
+        setLoaderPower(1, 400);
+        robot.setLaunchPower(0);
 
+        // park on launch line
+        robot.move(0,1, 0, .75);
+        sleep(400);
+        robot.stop();
     }
 
-    public void goToPosition(double targetXposition, double targetYposition, double robotPower, double desiredRobotOrientation, double allowableDistanceError) {
-
-        double distanceToXTarget = targetXposition - camera.getX();
-        double distanceToYTarget = targetYposition - camera.getY();
-
-        double distance = Math.hypot(distanceToXTarget, distanceToYTarget);
-
-        camera.track();
-        distance = Math.hypot(distanceToXTarget, distanceToYTarget);
-
-        distanceToXTarget = targetXposition - camera.getX();
-        distanceToYTarget = targetYposition - camera.getX();
-
-        double robotMovementAngle = Math.toDegrees(Math.atan2(distanceToXTarget, distanceToYTarget));
-
-        double robotMovementXComponent = calculateX(robotMovementAngle, robotPower);
-        double robotMovementYComponent = calculateY(robotMovementAngle, robotPower);
-        double pivotCorrection = desiredRobotOrientation - robot.getRotation("Z");
-
-        robot.move(robotMovementXComponent, robotMovementYComponent, pivotCorrection, robotPower);
-
-        if (distance < allowableDistanceError) {
-            atPoint = true;
-        } else {
-            atPoint = false;
-        }
-    }
-
-    /**
-     * Calculate the power in the x direction
-     * @param desiredAngle angle on the x axis
-     * @param speed robot's speed
-     * @return the x vector
-     */
-    private double calculateX(double desiredAngle, double speed) {
-        return Math.sin(Math.toRadians(desiredAngle)) * speed;
-    }
-
-    /**
-     * Calculate the power in the y direction
-     * @param desiredAngle angle on the y axis
-     * @param speed robot's speed
-     * @return the y vector
-     */
-    private double calculateY(double desiredAngle, double speed) {
-        return Math.cos(Math.toRadians(desiredAngle)) * speed;
+    public void setLoaderPower(double power, long ms){
+        robot.setLoadPower(-power);
+        sleep(ms);
+        robot.setLoadPower(0);
     }
 }

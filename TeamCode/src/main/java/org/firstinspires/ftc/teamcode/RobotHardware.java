@@ -70,6 +70,15 @@ public class RobotHardware {
         motor4.setPower(power4 * power);
     }
 
+    public void encoderMove(double x, double y, int pos, double power){
+        if (motor1.getCurrentPosition() ==  pos) {
+            stop();
+            return;
+        }
+        motor1.setTargetPosition(pos);
+        move(x, y,0, power);
+    }
+
     /**
      * Sets all movement power to zero to prevent the robot from moving
      */
