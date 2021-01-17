@@ -10,8 +10,7 @@ public class MoveTest extends OpMode {
     Camera camera = new Camera(robot);
     RingDetector detector = new RingDetector(camera, telemetry);
 
-    PulseCounter counter = new PulseCounter();
-    Thread thread = new Thread(counter);
+    LaunchRPM thread = new LaunchRPM();
 
     int inv = 1, stackSize = 0, counts = 0, lastCounts = 0, deltaCounts = 0;
     double speed = 0, spinPower = 0, lastTime = time, deltaTime = 0, spinSpeed, CPR = 7;
@@ -23,6 +22,7 @@ public class MoveTest extends OpMode {
         robot.init(hardwareMap);
         camera.activate(hardwareMap);
         detector.initTfod(hardwareMap);
+        thread.init(robot, this);
         thread.start();
     }
 
@@ -31,6 +31,8 @@ public class MoveTest extends OpMode {
 
         camera.track();
         stackSize = detector.detect();
+
+        spinSpeed = thread.getRPM();
 
         // Speed control
         if (gamepad1.right_trigger > .25) {
@@ -94,6 +96,13 @@ public class MoveTest extends OpMode {
 
         lastTime = time;
         lastCounts = counts;
+
+        try {
+            thread.sleep((long) thread.timeInterval);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
     }
 
     @Override
