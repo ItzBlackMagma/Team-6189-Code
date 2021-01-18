@@ -229,8 +229,8 @@ public class RobotHardware {
 
     }
 
-    public void setSpinSpeed(int rpm){
-
+    public void setSpinSpeed(double rpm){
+        rightSpin.setPower(rpm);
     }
 
     public void setLaunchPower(double power){
@@ -344,6 +344,8 @@ public class RobotHardware {
     private void initLauncher(HardwareMap hardwareMap){
         loader = hardwareMap.dcMotor.get("loader");
         rightSpin = hardwareMap.dcMotor.get("right spin");
+
+        rightSpin.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         rightSpin.setDirection(DcMotorSimple.Direction.REVERSE);
         loader.setDirection(DcMotorSimple.Direction.FORWARD);

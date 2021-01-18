@@ -70,7 +70,8 @@ public class MoveTest extends OpMode {
             spinPower = gamepad2.left_trigger;
         }
 
-        robot.setLaunchPower(spinPower);
+        // robot.setLaunchPower(spinPower);
+        robot.setSpinSpeed(spinPower);
         robot.setLoadPower(gamepad2.right_stick_y);
 
         robot.liftWobble(gamepad2.left_stick_y / 2);
@@ -89,9 +90,9 @@ public class MoveTest extends OpMode {
         telemetry.addData("/> ROBOT_POS X, Y", camera.getX() + ", " + camera.getY());
         telemetry.addData("/> IMU", robot.getRotation("Z"));
         telemetry.addData("/> SPIN POWER", spinPower);
-        telemetry.addData("/> TRANSLATE", translate);
-        telemetry.addData("/> DELTA TIME", deltaTime );
-        telemetry.addData("/> DELTA COUNTS", deltaCounts);
+       // telemetry.addData("/> TRANSLATE", translate);
+       // telemetry.addData("/> DELTA TIME", deltaTime );
+       // telemetry.addData("/> DELTA COUNTS", deltaCounts);
         telemetry.addData("/> SPIN SPEED", spinSpeed);
 
         lastTime = time;
