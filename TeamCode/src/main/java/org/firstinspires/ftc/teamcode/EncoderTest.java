@@ -18,6 +18,17 @@ public class EncoderTest extends OpMode {
 
     @Override
     public void loop() {
+        rpm = getRPM();
+        telemetry.addData("/> Delta Time", time - lastTime);
+        telemetry.addData("/> Time", time);
+        telemetry.addData("/> Last Time", lastTime);
+        telemetry.addData("/> POS", pos);
+        telemetry.addData("/> Last Pos", lastPositon);
+        telemetry.addData("/> Delta pos", pos - lastPositon);
+        telemetry.update();
+    }
+
+    public double getRPM(){
         time = getRuntime();
         pos = motor.getCurrentPosition();
         motor.setPower(-gamepad2.right_stick_y);
@@ -27,14 +38,9 @@ public class EncoderTest extends OpMode {
         rpm = (double) ((deltaPos / CPR) / (deltaTime / 60));
 
         telemetry.addData("/> RPM", rpm);
-        telemetry.addData("/> Delta Time", time - lastTime);
-        telemetry.addData("/> Time", time);
-        telemetry.addData("/> Last Time", lastTime);
-        telemetry.addData("/> POS", pos);
-        telemetry.addData("/> Last Pos", lastPositon);
-        telemetry.addData("/> Delta pos", pos - lastPositon);
-        telemetry.update();
+
         lastTime = time;
         lastPositon = pos;
+        return rpm;
     }
 }

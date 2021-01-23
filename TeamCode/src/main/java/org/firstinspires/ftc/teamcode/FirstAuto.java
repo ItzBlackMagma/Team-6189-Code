@@ -26,9 +26,10 @@ public class FirstAuto extends LinearOpMode {
         detector.initTfod(hardwareMap);
         telemetry.addData("/> INIT", "Activation complete");
 
-        sleep(1000);
+        stackSize = detector.detect();
+        sleep(500);
 
-        while ((!isStarted() && opModeIsActive()) || camera.getLocation() == null){
+        while ((!isStarted() && opModeIsActive())) {
             camera.track();
             stackSize = detector.detect();
             inv = robot.getInvFromTeam(robot.getTeam(camera));
@@ -41,6 +42,15 @@ public class FirstAuto extends LinearOpMode {
 
         robot.stop();
         waitForStart();
+
+        sleep(2000);
+
+        for (int i = 0; i < 500; i++) {
+            stackSize = detector.detect();
+            telemetry.addData("/> STACK SIZE", stackSize);
+            telemetry.addData("/> I", i);
+            telemetry.update();
+        }
 
         /*
          *      ******  RUN PHASE ******
@@ -60,30 +70,39 @@ public class FirstAuto extends LinearOpMode {
         telemetry.addData("/> LOCATION", camera.getLocation());
         telemetry.addData("/> STACK_SIZE", stackSize);
         telemetry.addData("/> IMU", robot.getRotation("Z"));
+        telemetry.update();
         sleep(100);
 
         // moves to the correct wobble goal zone
         switch (stackSize){
             case 0: // Zone A
-                robot.move(0.1, 1, 0, .75);
-                sleep(600);
+                robot.move(0, 1, 0, .75);
+                sleep(1400);
+                robot.move(1, 0, 0, .75);
+                sleep(1100);
+                robot.move(0,0,1,0.75);
+                sleep(300);
+                robot.move(0,0,-1,0.75);
+                sleep(300);
                 robot.stop();
                 sleep(100);
-                robot.move(-0.1, -1, 0, .75);
-                sleep(400);
+                robot.move(-0.2, -1, 0, .75);
+                sleep(1200);
                 robot.stop();
                 break;
             case 1: // Zone B
                 robot.move(0, 1, 0, .75);
-                sleep(1000);
+                sleep(2500);
                 robot.stop();
                 sleep(100);
                 robot.move(0, -1, 0, .75);
-                sleep(800);
+                sleep(4000);
                 robot.stop();
                 break;
             case 4: // Zone C
-                robot.move(0.1, 1, 0, .75);
+                robot.move(0, 1, 0, .75);
+                sleep(3000);
+                robot.move(1, 0, 0, .75);
                 sleep(1000);
                 robot.stop();
                 sleep(100);
@@ -96,17 +115,25 @@ public class FirstAuto extends LinearOpMode {
         robot.stop();
         sleep(1000);
 
+        robot.move(-1, 0, 0, .75);
+        sleep(1100);
+        robot.stop();
+        sleep(500);
+
         // fire rings
-        robot.setLaunchPower(1);
+        robot.setLaunchPower(.68);
         sleep(2000);
         setLoaderPower(1, 400);
+        robot.move(-1,0,0,.5);
+        sleep(200);
+        robot.stop();
         sleep(2000);
-        setLoaderPower(1, 400);
+        setLoaderPower(1, 1000);
         robot.setLaunchPower(0);
 
         // park on launch line
         robot.move(0,1, 0, .75);
-        sleep(400);
+        sleep(1500);
         robot.stop();
     }
 

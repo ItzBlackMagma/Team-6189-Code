@@ -13,7 +13,8 @@ public class MoveTest extends OpMode {
     LaunchRPM thread = new LaunchRPM();
 
     int inv = 1, stackSize = 0, counts = 0, lastCounts = 0, deltaCounts = 0;
-    double speed = 0, spinPower = 0, lastTime = time, deltaTime = 0, spinSpeed, CPR = 7;
+    double speed = 0, spinPower;
+    double time = 0, lastTime = 0, pos = 0, lastPositon = 0, CPR = 28, deltaPos = 0, deltaTime = 0, rpm = 0;
     boolean translate = false, atPoint = false;
 
 
@@ -31,8 +32,6 @@ public class MoveTest extends OpMode {
 
         camera.track();
         stackSize = detector.detect();
-
-        spinSpeed = thread.getRPM();
 
         // Speed control
         if (gamepad1.right_trigger > .25) {
@@ -78,12 +77,7 @@ public class MoveTest extends OpMode {
         robot.linear.setPower(gamepad2.left_stick_x);
         robot.lock.setPower(gamepad2.right_stick_x);
 
-        // finds the speed of the spin motor
-        deltaTime = time - lastTime;
-        counts = robot.rightSpin.getCurrentPosition();
-        deltaCounts = counts - lastCounts;
-        spinSpeed = (2 * 3.14 * deltaCounts) / (CPR * deltaTime); // measured in rad/s
-
+        getRPM();
 
         // Output data
         telemetry.addData("/> WOBBLE_LIFT_POS", robot.wobbleLift.getCurrentPosition());
@@ -93,17 +87,6 @@ public class MoveTest extends OpMode {
        // telemetry.addData("/> TRANSLATE", translate);
        // telemetry.addData("/> DELTA TIME", deltaTime );
        // telemetry.addData("/> DELTA COUNTS", deltaCounts);
-        telemetry.addData("/> SPIN SPEED", spinSpeed);
-
-        lastTime = time;
-        lastCounts = counts;
-
-        try {
-            thread.sleep((long) thread.timeInterval);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
     }
 
     @Override
@@ -155,5 +138,20 @@ public class MoveTest extends OpMode {
      */
     private double calculateY(double desiredAngle, double speed) {
         return Math.cos(Math.toRadians(desiredAngle)) * speed;
+    }
+
+    public double getRPM(){
+        time = getRuntime();
+        pos = robot.rightSpin.getCurrentPosition();
+        deltaPos = pos - lastPositon;
+        deltaTime = time - lastTime;
+
+        rpm = (deltaPos / CPR) / (deltaTime / 60);
+
+        telemetry.addData("/> RPM", rpm);
+
+        lastTime = time;
+        lastPositon = pos;
+        return rpm;
     }
 }
