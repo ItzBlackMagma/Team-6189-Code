@@ -11,7 +11,7 @@ public class FirstAuto extends LinearOpMode {
     private Camera camera = new Camera(robot);
     private RingDetector detector = new RingDetector(camera, telemetry);
 
-    private int stackSize = 0, inv = 1;
+    private int stackSize = 0, inv = 1, Os = 0, Singles = 0, Quads = 0;
     private double aimIncCount = 100;
     private long aimIncTime = 25;
 
@@ -29,7 +29,8 @@ public class FirstAuto extends LinearOpMode {
         stackSize = detector.detect();
         sleep(500);
 
-        while ((!isStarted() && opModeIsActive())) {
+        telemetry.addData("/> IsStarted ?", isStarted());
+        while (opModeIsActive() && isStarted()) {
             camera.track();
             stackSize = detector.detect();
             inv = robot.getInvFromTeam(robot.getTeam(camera));
@@ -42,31 +43,39 @@ public class FirstAuto extends LinearOpMode {
 
         robot.stop();
         waitForStart();
-
-        sleep(2000);
-
-        for (int i = 0; i < 500; i++) {
-            stackSize = detector.detect();
-            telemetry.addData("/> STACK SIZE", stackSize);
-            telemetry.addData("/> I", i);
-            telemetry.update();
-        }
-
         /*
          *      ******  RUN PHASE ******
          */
 
-        /*
-        while (!robot.atAngle) {
-            robot.move(0,0, robot.getPowerToAngle(robot.getAngleToPoint(Locations.START_STACK[0], Locations.START_STACK[1])), 0.75);
-            camera.track();
+        // Scans the starter stack
+        for (int i = 0; i < 1000; i++) {
             stackSize = detector.detect();
-            telemetry.addData("/> LOCATION", camera.getLocation());
-            telemetry.addData("/> STACK_SIZE", stackSize);
-            telemetry.addData("/> IMU", robot.getRotation("Z"));
-            telemetry.update();
+            telemetry.addData("/> STACK SIZE", stackSize);
+            telemetry.addData("/> I", i);
+
+            if(stackSize == 0)
+                Os++;
+            if(stackSize == 1)
+                Singles++;
+            if (stackSize == 4)
+                Quads++;
+
+            telemetry.addData("/> Zeros", Os);
+            telemetry.addData("/> Singles", Singles);
+            telemetry.addData("/> Quads", Quads);
         }
-        */
+
+        // Selects the most likely stack size
+        if(Singles > Os || Quads > Os){
+            if(Quads > Singles){
+                stackSize = 4;
+            } else {
+                stackSize = 1;
+            }
+        } else {
+            stackSize = 0;
+        }
+
         telemetry.addData("/> LOCATION", camera.getLocation());
         telemetry.addData("/> STACK_SIZE", stackSize);
         telemetry.addData("/> IMU", robot.getRotation("Z"));

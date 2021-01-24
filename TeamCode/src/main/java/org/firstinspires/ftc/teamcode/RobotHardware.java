@@ -347,6 +347,7 @@ public class RobotHardware {
         rightSpin = hardwareMap.dcMotor.get("right spin");
 
         rightSpin.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightSpin.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         rightSpin.setDirection(DcMotorSimple.Direction.REVERSE);
         loader.setDirection(DcMotorSimple.Direction.FORWARD);
