@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.RobotLog;
 import com.qualcomm.robotcore.util.ThreadPool;
 import com.vuforia.Frame;
+import com.vuforia.HINT;
 import com.vuforia.Vuforia;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
@@ -36,14 +37,13 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XYZ;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.EXTRINSIC;
 
 public class Camera {
-
-    RobotHardware robot;
+    HardwareMap hardwareMap;
     Telemetry telemetry;
 
-    OpenGLMatrix lastLocation = null;
+    private OpenGLMatrix lastLocation = new OpenGLMatrix();
 
-    int captureCounter = 0;
-    File captureDirectory = AppUtil.ROBOT_DATA_DIR;
+    private int captureCounter = 0;
+    private File captureDirectory = AppUtil.ROBOT_DATA_DIR;
 
     // We use millimeters for accuracy
     float mmPerInch        = 25.4f;
@@ -61,25 +61,26 @@ public class Camera {
     VuforiaTrackables targets;
     List<VuforiaTrackable> allTrackables;
 
-    public Camera(RobotHardware robot){
-        this.robot = robot;
-        this.telemetry = robot.telemetry;
+
+    public Camera(HardwareMap hardwareMap, Telemetry telemetry){
+        this.hardwareMap = hardwareMap;
+        this.telemetry = telemetry;
     }
 
     public void activate(HardwareMap hardwareMap){
-        telemetry.addData("> ", "Beginning Camera Activation Process...");
-        telemetry.update();
+        telemetry.addData("/> ", "Beginning Camera Activation Process...");
 
         // Camera preview
-        telemetry.addData("> CAMERA", " Checking For Camera Monitor View...");
+        telemetry.addData("/> CAMERA", " Checking For Camera Monitor View...");
         //int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(); // uses no camera preview
 
-        telemetry.addData("> CAMERA", " Camera Monitor View Is Disabled...");
+        telemetry.addData("/> CAMERA", " Camera Monitor View Is Disabled...");
 
         // Vuforia parameters
         parameters.vuforiaLicenseKey = "AU6DGO3/////AAABmfbaGbX2lU7yobzEFgj/TC95dmC+wGBKUjoXoXSYSiz92D3Y5XU2YY4TlNcgnQLdXr8Pz3zstBN9KHBPTMczwa4QWR0rqGKqC5L3rdvyZM/bFd2v9/YkKpd54Uyl0tX1CyEB9XSW2HKhFjcofvkud19pT1nqEuQBU+Q8zKCJXc8gSycUPELKVARHhsMPOoJMH4wlS7QmwWde4q/nolTJIjolaLvSemiql29GodpyuXfxCyjRKlCLvEZ1GbwhfdDwrPsZM1QBbOJgdnAIGZ00FNf+059bdvUv3SkcfacMRVua/Jp1BWPgkocF3y2PZrBN28s0AGIlbFBMkYSDZ8stGOWDI/a9nM1EXutODEZUGOUd";
-        parameters.cameraName = robot.webcamName;
+        parameters.useExtendedTracking = false;
+        parameters.cameraName = hardwareMap.get(WebcamName.class, "robo eye");
 
         // Instantiate the Vuforia engine
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
@@ -92,6 +93,7 @@ public class Camera {
 
         // Load the data sets for the tracking pictures
         VuforiaTrackables targets = vuforia.loadTrackablesFromAsset("UltimateGoal");
+        Vuforia.setHint(HINT.HINT_MAX_SIMULTANEOUS_IMAGE_TARGETS, 4);
 
         VuforiaTrackable redWall = targets.get(2); // image 3
         redWall.setName("RedWall");
@@ -135,7 +137,7 @@ public class Camera {
 
         // Now we put the location of the camera on the robot
         OpenGLMatrix robotFromCamera = OpenGLMatrix
-                .translation(mmBotWidth/2,0,0)
+                .translation(9, -6.5f,3.5f)
                 .multiplied(Orientation.getRotationMatrix(AxesReference.EXTRINSIC, AxesOrder.XZY,
                         AngleUnit.DEGREES, 90, 90, 0));
 
@@ -152,13 +154,12 @@ public class Camera {
 
         targets.activate();
 
-        telemetry.addData("> CAMERA", " Vuforia Is Now Activated...");
-        telemetry.addData("> ROBOT", "Camera Activation Complete");
-        telemetry.update();
+        telemetry.addData("/> CAMERA", " Vuforia Is Now Activated...");
+        telemetry.addData("/> ROBOT", "Camera Activation Complete");
     }
 
     public void track(){
-        telemetry.addData("> VUFORIA", " Tracking Targets...");
+        telemetry.addData("/> VUFORIA", " Tracking Targets...");
         for (VuforiaTrackable trackable : allTrackables) {
             /**
              * getUpdatedRobotLocation() will return null if no new information is available since
@@ -177,24 +178,18 @@ public class Camera {
          */
         if (lastLocation != null) {
             //  RobotLog.vv(TAG, "robot=%s", format(lastLocation));
-            telemetry.addData("> VUFORIA: Robot Position", format(lastLocation));
-
-            robot.robotX = (double) lastLocation.getTranslation().get(0) / mmPerInch;
-            robot.robotY = (double) lastLocation.getTranslation().get(1) / mmPerInch;
-            robot.robotAngle = (double) Orientation.getOrientation(lastLocation, AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).thirdAngle; // orientation about the Z (up) axis
-
-            telemetry.addData("> VUFORIA: Robot Location: X, Y, R", robot.robotX + ", " + robot.robotY + ", " + robot.robotAngle);
+            telemetry.addData("/> VUFORIA: Robot Transform (Orientation & Location)", format(lastLocation));
+            telemetry.addData("/> VUFORIA: Robot Location: X, Y, R", getX() + ", " + getY() + ", " + getAngle()); // returns inches
 
         } else {
-            telemetry.addData("> VUFOIRA ", "Target Not Found: Location Unknown");
+            telemetry.addData("/> VUFOIRA ", "Target Not Found: Location Unknown");
         }
-        telemetry.update();
+        //telemetry.update();
     }
 
     public void deactivate(){
         targets.deactivate();
-        telemetry.addData("> CAMERA", " Vuforia Has Been Deactivated");
-        telemetry.update();
+        telemetry.addData("/> CAMERA", " Vuforia Has Been Deactivated");
     }
 
     public String format(OpenGLMatrix transformationMatrix) {
@@ -224,4 +219,30 @@ public class Camera {
             }
         }));
     }
+
+    public double getAngle(){ // returns the rotation around just the Z axis
+        return (double) Orientation.getOrientation(lastLocation, AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).thirdAngle;
+    }
+
+    public Orientation getOrientation(){
+        return Orientation.getOrientation(lastLocation, AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
+    }
+
+    public float[] getLocation(){
+        if(lastLocation != null) {
+            float[] location = lastLocation.getTranslation().getData();
+            return location;
+        } else {
+            return null;
+        }
+    }
+
+    public double getX(){
+        return getLocation()[0];
+    }
+
+    public double getY(){
+        return getLocation()[1];
+    }
+
 }
