@@ -46,6 +46,10 @@ public class Robot {
         motor4.setPower(power4 * power);
     }
 
+    public void stop(){
+        move(0,0,0,0);
+    }
+
     /**
      * Takes in the desired target position using inches, then it converts the inches to usable encoder counts.
      * This makes it easier to make mesurements.
@@ -69,9 +73,16 @@ public class Robot {
         wobble.init(hardwareMap);
         launcher.init(hardwareMap);
         camera.activate(hardwareMap);
+        camera.initTfod(hardwareMap);
 
         initIMU(hardwareMap);
         initMotors(hardwareMap);
+    }
+
+    public void shutdown(){
+        stop();
+        camera.shutdown();
+        camera.deactivate();
     }
 
     private void initIMU(HardwareMap hardwareMap){

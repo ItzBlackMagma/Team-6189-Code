@@ -53,4 +53,8 @@ public class Wobble {
         lifter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
+    public void useEncoders(){
+        lifter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
 }
