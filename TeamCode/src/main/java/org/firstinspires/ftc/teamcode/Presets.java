@@ -1,31 +1,25 @@
 package org.firstinspires.ftc.teamcode;
 
-public class Presets {
-    Robot robot;
+import org.firstinspires.ftc.teamcode.presets.IMovements;
+import org.firstinspires.ftc.teamcode.presets.ToWobbleZone;
 
-    int preset = 0;
+import java.util.ArrayList;
+
+public class Presets {
+    private Robot robot;
+
+    int index = 0;
+    ArrayList<IMovements> presets = new ArrayList<>();
 
     public Presets(Robot robot){
         this.robot = robot;
+
+        presets.add(new ToWobbleZone(robot, robot.camera));
     }
 
     public void runNextPreset(){
-        preset++;
-
-        switch (preset){
-            case 0:
-                //do stuff
-                break;
-            case 1:
-                //do stuff
-                break;
-            case 2:
-                //do stuff
-                break;
-            case 3:
-                //do stuff
-                break;
-        }
+        presets.get(index).move();
+        index++;
     }
 
 

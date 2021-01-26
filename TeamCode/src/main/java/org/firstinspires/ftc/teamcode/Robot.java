@@ -6,6 +6,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
 import java.util.zip.CheckedOutputStream;
 
@@ -63,6 +66,10 @@ public class Robot {
         motor2.setTargetPosition((int) (pos2 / COUNTS_PER_INCH));
         motor3.setTargetPosition((int) (pos3 / COUNTS_PER_INCH));
         motor4.setTargetPosition((int) (pos4 / COUNTS_PER_INCH));
+    }
+
+    public double getRotation(){
+        return imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).thirdAngle;
     }
 
     public void init(HardwareMap hardwareMap){

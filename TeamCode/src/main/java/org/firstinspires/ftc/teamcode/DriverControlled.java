@@ -1,12 +1,16 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+@TeleOp
 public class DriverControlled extends OpMode {
 
     Robot robot = new Robot(telemetry);
+    Presets presets = new Presets(robot);
+
     double x,y,r,p,spinPower,wobblePower,extenderPower,loadPower,wobblePos=0,wobbleInc=10;
-    boolean isDpad_up, dpad_up_toggle, isDpad_down, isDpad_down_toggle;
+    boolean isDpad_up = false, isDpad_down = false, isX = false;
 
     @Override
     public void init() {
@@ -19,29 +23,18 @@ public class DriverControlled extends OpMode {
     @Override
     public void loop() {
         // toggles
-        if (gamepad2.dpad_up){ // dpad up
-            if(dpad_up_toggle){
-                isDpad_up = false;
-            } else {
-                isDpad_up = true;
-                dpad_up_toggle = true;
-            }
-        } else {
-            isDpad_up = false;
-            dpad_up_toggle = false;
+        if(gamepad2.dpad_up && !isDpad_up){  // dpad up
+            wobblePos += wobbleInc;
         }
-
-        if (gamepad2.dpad_down){ // dpad down
-            if(isDpad_down_toggle){
-                isDpad_down = false;
-            } else {
-                isDpad_down = true;
-                isDpad_down_toggle = true;
-            }
-        } else {
-            isDpad_down = false;
-            isDpad_down_toggle = false;
+        isDpad_up = gamepad2.dpad_up;
+        if(gamepad2.dpad_down && !isDpad_down){ // dpad down
+            wobblePos -= wobbleInc;
         }
+        isDpad_down = gamepad2.dpad_down;
+        if(gamepad1.x && !isX){  // x pressed
+            presets.runNextPreset();
+        }
+        isX = gamepad1.x;
 
         // movement
         p = gamepad1.right_trigger;
@@ -56,12 +49,6 @@ public class DriverControlled extends OpMode {
         wobblePower = gamepad2.left_stick_y;
         extenderPower = gamepad2.left_stick_x;
         loadPower = gamepad2.right_stick_y;
-
-        // wobble pos
-        if(isDpad_up)
-            wobblePos += wobbleInc;
-        if(isDpad_down)
-            wobblePos -= wobbleInc;
 
         // set everything
         robot.move(x,y,r,p);
