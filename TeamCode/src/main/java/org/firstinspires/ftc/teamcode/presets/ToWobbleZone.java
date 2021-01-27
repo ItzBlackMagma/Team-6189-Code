@@ -32,15 +32,15 @@ public class ToWobbleZone implements IMovements {
     public void path() {
         switch (stackSize) {
             case 0:
-                robot.setPos(1000, 1000, 1000, 1000);
+                robot.setPos(81.25, 81.25, 81.25, 81.25);
                 robot.move(1, 0, 0, .75);
                 break;
             case 1:
-                robot.setPos(1100, 1100, 1100, 1100);
+                robot.setPos(104.25, 104.25, 104.25, 104.25);
                 robot.move(1, 0, 0, .75);
                 break;
             case 4:
-                robot.setPos(1300, 1300, 1300, 1300);
+                robot.setPos(127.25, 127.25, 127.25, 127.25);
                 robot.move(1, 0, 0, .75);
                 break;
         }
