@@ -20,7 +20,7 @@ public class Robot {
     public Launcher launcher;
     public BNO055IMU imu;
 
-    private Telemetry telemetry;
+    public Telemetry telemetry;
     public DcMotor motor1, motor2, motor3, motor4; // starts with the front left and moves clockwise
 
     public static final double COUNTS_PER_INCH = 5; // needs to be replaced with the actual number
