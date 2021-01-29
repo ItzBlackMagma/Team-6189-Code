@@ -46,9 +46,9 @@ public class DriverControlled extends OpMode {
 
         // secondary
         spinPower = gamepad2.right_trigger;
-        wobblePower = gamepad2.left_stick_y;
+        wobblePower = -gamepad2.left_stick_y;
         extenderPower = gamepad2.left_stick_x;
-        loadPower = gamepad2.right_stick_y;
+        loadPower = -gamepad2.right_stick_y;
 
         // set everything
         robot.move(x,y,r,p);
@@ -56,6 +56,7 @@ public class DriverControlled extends OpMode {
         robot.launcher.load(loadPower);
         // robot.wobble.lift(wobblePower);
         robot.wobble.raiseToPos(wobblePos, wobblePower);
+        telemetry.addData("/> WOBBLE POS", robot.wobble.lifter.getCurrentPosition());
     }
 
 
