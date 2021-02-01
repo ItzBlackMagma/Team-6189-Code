@@ -9,7 +9,7 @@ public class DriverControlled extends OpMode {
     Robot robot = new Robot(telemetry);
     Presets presets = new Presets(robot);
 
-    double x,y,r,p,spinPower,wobblePower,extenderPower,loadPower,wobblePos=0,wobbleInc=10;
+    double x,y,r,p,spinPower,wobblePower,extenderPower,loadPower,wobblePos=0,wobbleInc=1000;
     boolean isDpad_up = false, isDpad_down = false, isX = false;
 
     @Override
@@ -24,6 +24,7 @@ public class DriverControlled extends OpMode {
     public void loop() {
         // toggles
         if(gamepad2.dpad_up && !isDpad_up){  // dpad up
+            robot.wobble.toPosition();
             wobblePos += wobbleInc;
         }
         isDpad_up = gamepad2.dpad_up;
@@ -44,11 +45,19 @@ public class DriverControlled extends OpMode {
         if(p < 0.25)
             p = 0.25;
 
-        // secondary
-        spinPower = gamepad2.right_trigger;
+        // secondary game pad controls
+        if (gamepad2.x) {
+            spinPower = .65;
+        } else if (gamepad2.y) {
+            spinPower = .75;
+        } else if(gamepad2.b) {
+            spinPower = .55;
+        } else{
+            spinPower = gamepad2.right_trigger;
+        }
         wobblePower = -gamepad2.left_stick_y;
-        extenderPower = gamepad2.left_stick_x;
-        loadPower = -gamepad2.right_stick_y;
+        extenderPower = -gamepad2.left_stick_x;
+        loadPower = gamepad2.right_stick_y;
 
         // set everything
         robot.move(x,y,r,p);
@@ -56,6 +65,8 @@ public class DriverControlled extends OpMode {
         robot.launcher.load(loadPower);
         // robot.wobble.lift(wobblePower);
         robot.wobble.raiseToPos(wobblePos, wobblePower);
+        robot.wobble.extend(extenderPower);
+        robot.wobble.grip(gamepad2.right_stick_x);
         telemetry.addData("/> WOBBLE POS", robot.wobble.lifter.getCurrentPosition());
     }
 
