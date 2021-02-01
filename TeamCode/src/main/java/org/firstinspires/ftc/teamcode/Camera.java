@@ -118,7 +118,7 @@ public class Camera {
         blueTower.setName("BlueTower");
 
         // For convenience, gather together all the trackable objects in one easily-iterable collection
-        List<VuforiaTrackable> allTrackables = new ArrayList<VuforiaTrackable>();
+        List<VuforiaTrackable> allTrackables = new ArrayList<>();
         allTrackables.addAll(targets);
 
 
@@ -168,7 +168,7 @@ public class Camera {
     public void track(){
         telemetry.addData("/> VUFORIA", " Tracking Targets...");
         for (VuforiaTrackable trackable : allTrackables) {
-            /**
+            /*
              * getUpdatedRobotLocation() will return null if no new information is available since
              * the last time that call was made, or if the trackable is not currently visible.
              * getRobotLocation() will return null if the trackable is not currently visible.
@@ -180,7 +180,7 @@ public class Camera {
                 lastLocation = robotLocationTransform;
             }
         }
-        /**
+        /*
          * Provide feedback as to where the robot was last located (if we know).
          */
         if (lastLocation != null) {
@@ -227,13 +227,14 @@ public class Camera {
             int i = 0;
             for (Recognition recognition : updatedRecognitions) {
                 telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
+                telemetry.addData("/> CONFIDENCE", recognition.getConfidence());
                 telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
                         recognition.getLeft(), recognition.getTop());
                 telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
                         recognition.getRight(), recognition.getBottom());
-                if(recognition.getLabel() == "Single")
+                if(recognition.getLabel().equals("Single"))
                     stackSize = 1;
-                else if (recognition.getLabel() == "Quad")
+                else if (recognition.getLabel().equals("Quad"))
                     stackSize = 4;
                 else
                     stackSize = 0;
@@ -277,7 +278,7 @@ public class Camera {
     }
 
     public double getAngle(){ // returns the rotation around just the Z axis
-        return (double) Orientation.getOrientation(lastLocation, AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).thirdAngle;
+        return Orientation.getOrientation(lastLocation, AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).thirdAngle;
     }
 
     public Orientation getOrientation(){
@@ -286,8 +287,7 @@ public class Camera {
 
     public float[] getLocation(){
         if(lastLocation != null) {
-            float[] location = lastLocation.getTranslation().getData();
-            return location;
+            return lastLocation.getTranslation().getData();
         } else {
             return null;
         }
