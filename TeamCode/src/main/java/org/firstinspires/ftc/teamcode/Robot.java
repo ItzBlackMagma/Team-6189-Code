@@ -62,10 +62,29 @@ public class Robot {
      * @param pos4 Target position of motor4
      */
     public void setPos(double pos1, double pos2, double pos3, double pos4){
-        motor1.setTargetPosition((int) (pos1 / COUNTS_PER_INCH));
-        motor2.setTargetPosition((int) (pos2 / COUNTS_PER_INCH));
-        motor3.setTargetPosition((int) (pos3 / COUNTS_PER_INCH));
-        motor4.setTargetPosition((int) (pos4 / COUNTS_PER_INCH));
+        motor1.setTargetPosition((int) (pos1 * COUNTS_PER_INCH));
+        motor2.setTargetPosition((int) (pos2 * COUNTS_PER_INCH));
+        motor3.setTargetPosition((int) (pos3 * COUNTS_PER_INCH));
+        motor4.setTargetPosition((int) (pos4 * COUNTS_PER_INCH));
+    }
+
+    public double getDirFromPos(int curPos, int desPos, double power){ // give a positive power
+        if ((desPos - curPos) > 1){
+            return power;
+        } else if ((desPos - curPos) < -1){
+            return  -power;
+        } else {
+            return 0;
+        }
+    }
+
+    public int[] getPos(){
+        int[] motorPos = new int[4];
+        motorPos[0] = motor1.getTargetPosition();
+        motorPos[1] = motor2.getTargetPosition();
+        motorPos[2] = motor3.getTargetPosition();
+        motorPos[3] = motor4.getTargetPosition();
+        return motorPos;
     }
 
     public double getRotation(){
