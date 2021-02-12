@@ -15,7 +15,7 @@ public class MoveEncoders extends OpMode {
     public void init() {
         robot.init(hardwareMap);
         robot.resetEncoders();
-        robot.toPosition();
+        robot.useEncoders();
     }
 
     @Override
@@ -29,7 +29,7 @@ public class MoveEncoders extends OpMode {
 
         if(gamepad1.x && !reset){
             robot.resetEncoders();
-            robot.toPosition();
+            robot.useEncoders();
         } reset = gamepad1.x;
 
         telemetry.addData("/> MOTOR 1", robot.motor1.getCurrentPosition());

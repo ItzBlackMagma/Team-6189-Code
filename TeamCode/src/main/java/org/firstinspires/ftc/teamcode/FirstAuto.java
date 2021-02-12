@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+@Autonomous
 public class FirstAuto extends LinearOpMode {
     Robot robot = new Robot(telemetry);
     int stackSize = 0;
@@ -11,8 +13,6 @@ public class FirstAuto extends LinearOpMode {
 
         // init phase
         robot.init(hardwareMap);
-        robot.camera.activate(hardwareMap);
-        robot.camera.initTfod(hardwareMap);
         telemetry.addData("/> INIT", "Activation complete");
 
         stackSize = robot.camera.stackSize();
@@ -113,13 +113,31 @@ public class FirstAuto extends LinearOpMode {
         robot.stop();
         sleep(1000);
 
+        robot.move(0,0,1,0.5);
+        sleep(100);
+        robot.stop();
+
+//        while(robot.getRotation() > 0.5 || robot.getRotation() < -0.5){
+//            telemetry.addData("/> IMU", robot.getRotation());
+//            double deltaRot = 0 - robot.getRotation();
+//            if(deltaRot > 0.5){
+//                robot.move(0,0,0.5, 1);
+//            } else if( deltaRot < -0.5) {
+//                robot.move(0,0,-0.5, 1);
+//            } else {
+//                robot.stop();
+//            }
+//        }
+
+        sleep(500);
+
         robot.move(-1, 0, 0, .75);
         sleep(1100);
         robot.stop();
         sleep(500);
 
         // fire rings
-        robot.launcher.launch(0.68);
+        robot.launcher.launch(0.62);
         sleep(2000);
         setLoaderPower(1, 400);
         robot.move(-1,0,0,.5);

@@ -47,11 +47,11 @@ public class DriverControlled extends OpMode {
 
         // secondary game pad controls
         if (gamepad2.x) {
-            spinPower = .65;
+            spinPower = .62;
         } else if (gamepad2.y) {
             spinPower = .75;
         } else if(gamepad2.b) {
-            spinPower = .55;
+            spinPower = .565;
         } else{
             spinPower = gamepad2.right_trigger;
         }
