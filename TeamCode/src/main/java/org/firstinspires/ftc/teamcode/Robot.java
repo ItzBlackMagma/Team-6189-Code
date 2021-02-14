@@ -24,7 +24,7 @@ public class Robot {
     public DcMotor motor1, motor2, motor3, motor4; // starts with the front left and moves clockwise
 
     public static final double COUNTS_PER_REVOLUTION = 28;
-    public static final double COUNTS_PER_INCH = (COUNTS_PER_REVOLUTION / 360) / ((4 * 3.14) / 360); // needs to be replaced with the actual number
+    public static final double COUNTS_PER_INCH = 45; // .833333333; //COUNTS_PER_REVOLUTION / (4 * Math.PI); // needs to be replaced with the actual number
 
     public Robot(Telemetry telemetry) {
         this.telemetry = telemetry;
@@ -63,10 +63,10 @@ public class Robot {
      * @param pos4 Target position of motor4
      */
     public void setPos(double pos1, double pos2, double pos3, double pos4){
-        motor1.setTargetPosition((int) (pos1)); //* COUNTS_PER_INCH));
-        motor2.setTargetPosition((int) (pos2)); // * COUNTS_PER_INCH));
-        motor3.setTargetPosition((int) (pos3)); // * COUNTS_PER_INCH));
-        motor4.setTargetPosition((int) (pos4)); // * COUNTS_PER_INCH));
+        motor1.setTargetPosition((int) (pos1 * COUNTS_PER_INCH));
+        motor2.setTargetPosition((int) (pos2 * COUNTS_PER_INCH));
+        motor3.setTargetPosition((int) (pos3 * COUNTS_PER_INCH));
+        motor4.setTargetPosition((int) (pos4 * COUNTS_PER_INCH));
     }
 
     public double getDirFromPos(int curPos, int desPos, double power){ // give a positive power
