@@ -9,6 +9,10 @@ public class EncoderAutonomous extends LinearOpMode {
     boolean atPosition = false;
     int[] pos = new int[4];
 
+    int stackSize = robot.camera.stackSize();
+    double goal;
+    long waitTime = 7000;
+
     @Override
     public void runOpMode() throws InterruptedException {
         robot.init(hardwareMap);
@@ -18,47 +22,52 @@ public class EncoderAutonomous extends LinearOpMode {
         robot.toPosition();
         waitForStart();
 
-        runToPosition(12,12,12,12,0.8);
-        sleep(5000);
+       // runToPosition(12,12,12,12,0.8);
+       // sleep(5000);
 
-        /*
-        int stackSize = robot.camera.stackSize();
-        int goal = 0;
-        long waitTime = 7000;
-        switch (stackSize) {
-            case 0:
-                goal = 3000;
-                waitTime = 4000;
-                runToPosition(goal,goal,goal,goal,0.8);
-                sleep(waitTime);
-                break;
-            case 1:
-                goal = 3700;
-                waitTime = 6000;
-                runToPosition(goal,goal,goal,goal,0.8);
-                sleep(waitTime);
-                break;
-            case 4:
-                goal = 5000;
-                waitTime = 7000;
-                runToPosition(goal,goal,goal,goal,0.8);
-                sleep(waitTime);
-                break;
-        }
+        stackSize = robot.camera.stackSize();
+        sleep(100);
 
-        goal = 2700;
-        runToPosition(goal, goal, goal, goal, -.8);
+        moveToWobbleZone();
+        goal = Locations.LINE_2;
+        runToPosition(goal, goal, goal, goal, 0.8);
+        sleep(waitTime - 1000);
+        moveToWobbleZone();
+
+        goal = Locations.STARTER_STACK_Y + 5;
+        runToPosition(goal, goal, goal, goal, 0.8);
         sleep(waitTime);
 
-        robot.launcher.launch(0.62);
+        robot.launcher.launch(0.70);
         sleep(2000);
         setLoaderPower(1,4000);
+        robot.launcher.launch(0);
 
-        goal = 3000;
+        goal = 10;
         runToPosition(goal,goal,goal,goal,0.8);
         sleep(10000);
-         */
 
+    }
+
+    void moveToWobbleZone(){
+        switch (stackSize) {
+            case 0:
+                goal = Locations.WOBBLE_ZONE_A - 18;
+                waitTime = 4000;
+                runToPosition(goal,goal,goal,goal,0.8);
+                break;
+            case 1:
+                goal = Locations.WOBBLE_ZONE_B - 18;
+                double offset = Locations.WOBBLE_ZONE_B_OFFSET;
+                waitTime = 6000;
+                runToPosition(goal - offset, goal + offset, goal - offset, goal + offset,0.8);
+                break;
+            case 4:
+                goal = Locations.WOBBLE_ZONE_C - 18;
+                waitTime = 7000;
+                runToPosition(goal,goal,goal,goal,0.8);
+                break;
+        } sleep(waitTime);
     }
 
     void runToPosition(double pos1, double pos2, double pos3, double pos4, double power){ // in inches
