@@ -24,7 +24,7 @@ public class Robot {
     public DcMotor motor1, motor2, motor3, motor4; // starts with the front left and moves clockwise
 
     public static final double COUNTS_PER_REVOLUTION = 28;
-    public static final double COUNTS_PER_INCH = 45; // .833333333; //COUNTS_PER_REVOLUTION / (4 * Math.PI); // needs to be replaced with the actual number
+    public static final double COUNTS_PER_INCH = 45;
 
     public Robot(Telemetry telemetry) {
         this.telemetry = telemetry;
