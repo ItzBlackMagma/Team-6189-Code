@@ -9,19 +9,19 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class Wobble {
     DcMotor lifter;
     Servo gripper;
-    CRServo extender;
+    // CRServo extender;
 
     final double COUNTS_PER_INCH = 5;  // needs to be replaced with the actual number
 
     public void init(HardwareMap hm){
         lifter = hm.dcMotor.get("wobble");
         gripper = hm.servo.get("lock");
-        extender = hm.get(CRServo.class, "linear");
+        // extender = hm.get(CRServo.class, "linear");
 
         lifter.setDirection(DcMotorSimple.Direction.FORWARD);
         lifter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         gripper.setDirection(Servo.Direction.FORWARD);
-        extender.setDirection(DcMotorSimple.Direction.FORWARD);
+        // extender.setDirection(DcMotorSimple.Direction.FORWARD);
         resetEncoders();
         noEncoders();
     }
@@ -37,9 +37,7 @@ public class Wobble {
         toPosition();
     }
 
-    public void extend(double power){
-        extender.setPower(power);
-    }
+    // public void extend(double power){ extender.setPower(power); }
 
     public void grip(double pos){
         gripper.setPosition(pos);
