@@ -22,15 +22,19 @@ public class Wobble {
         lifter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         gripper.setDirection(Servo.Direction.FORWARD);
         extender.setDirection(DcMotorSimple.Direction.FORWARD);
+        resetEncoders();
+        noEncoders();
     }
 
     public void lift(double power){
+        noEncoders();
         lifter.setPower(power);
     }
 
     public void raiseToPos(double pos, double power){
-        lifter.setTargetPosition((int) (pos / COUNTS_PER_INCH));
         lifter.setPower(power);
+        lifter.setTargetPosition((int) (pos / COUNTS_PER_INCH));
+        toPosition();
     }
 
     public void extend(double power){

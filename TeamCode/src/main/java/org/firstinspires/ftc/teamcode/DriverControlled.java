@@ -10,7 +10,7 @@ public class DriverControlled extends OpMode {
     Presets presets = new Presets(robot);
 
     double x,y,r,p,spinPower,wobblePower,extenderPower,loadPower,wobblePos=0,wobbleInc=1000;
-    boolean isDpad_up = false, isDpad_down = false, isX = false;
+    boolean isDpad_up = false, isDpad_down = false, isX = false, isA = false;
 
     @Override
     public void init() {
@@ -55,6 +55,15 @@ public class DriverControlled extends OpMode {
         } else{
             spinPower = gamepad2.right_trigger;
         }
+
+        if(gamepad2.a && !isA){
+            robot.launcher.fire();
+        } else{
+            if(!robot.launcher.isReady)
+                robot.launcher.reload();
+        }
+        isA = gamepad2.a;
+
         wobblePower = -gamepad2.left_stick_y;
         extenderPower = -gamepad2.left_stick_x;
         loadPower = gamepad2.right_stick_y;
