@@ -8,7 +8,8 @@ public class DriverControlled extends OpMode {
 
     Robot robot = new Robot(telemetry);
 
-    double x,y,r,p,spinPower,wobblePower,extenderPower,loadPower,wobblePos=0,wobbleInc=1000;
+    double x,y,r,p,spinPower,wobblePower,extenderPower,loadPower,wobbleInc=1000;
+    final int wobblePos =(28 * 220) / 360;
     final double robotLaunchHeight = 5, HighGoalHeight = 36, PowerShotHeight = 32;
     boolean isDpad_up = false, isDpad_down = false, isX = false, isA = false, highGoal = true;
 
@@ -39,21 +40,22 @@ public class DriverControlled extends OpMode {
 
         if(gamepad2.a && !isA){
             robot.launcher.fire();
-        } else{
-            if(!robot.launcher.isReady)
-                robot.launcher.reload();
+        }
+        if(!gamepad2.a && isA) {
+            robot.launcher.reload();
         }
         isA = gamepad2.a;
 
         if(gamepad2.right_bumper){
             highGoal = true;
-        } else if(gamepad2.left_bumper){
+        }
+        if(gamepad2.left_bumper){
             highGoal = false;
         }
 
         if(highGoal){
             robot.launcher.rotateToAngle(Math.atan((HighGoalHeight - robotLaunchHeight) / (Locations.GOAL_TO_STACK)), .5);
-        } else if(!highGoal){
+        } else {
             robot.launcher.rotateToAngle(Math.atan((PowerShotHeight - robotLaunchHeight) / (Locations.GOAL_TO_STACK)), .5);
         }
 
@@ -63,16 +65,6 @@ public class DriverControlled extends OpMode {
     }
 
     void controlWobble(){
-        if(gamepad1.dpad_up && !isDpad_up){  // dpad up
-            robot.wobble.toPosition();
-            wobblePos += wobbleInc;
-        }
-        isDpad_up = gamepad1.dpad_up;
-        if(gamepad1.dpad_down && !isDpad_down){ // dpad down
-            wobblePos -= wobbleInc;
-        }
-        isDpad_down = gamepad1.dpad_down;
-
         if(gamepad1.right_bumper){ // extend wobble arm
             robot.wobble.raiseToPos(wobblePos, .5);
         } else if(gamepad1.left_bumper){ // fold wobble arm
