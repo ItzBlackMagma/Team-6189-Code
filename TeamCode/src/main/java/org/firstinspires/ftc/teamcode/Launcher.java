@@ -24,10 +24,11 @@ public class Launcher {
         angle.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         push.setDirection(Servo.Direction.FORWARD);
 
-        spin.setDirection(DcMotorSimple.Direction.FORWARD);
+        spin.setDirection(DcMotorSimple.Direction.REVERSE);
         load.setDirection(DcMotorSimple.Direction.FORWARD);
         angle.setDirection(DcMotorSimple.Direction.FORWARD);
 
+        angle.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         reload();
     }
 
@@ -55,6 +56,11 @@ public class Launcher {
         angle.setPower(power);
         angle.setTargetPosition((int)((ANGLE_CPR * theta) / 360));
         angle.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+
+    public void changeAngle(double power){
+        angle.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        angle.setPower(power);
     }
 
 }

@@ -27,13 +27,12 @@ public class Wobble {
     }
 
     public void lift(double power){
-        noEncoders();
         lifter.setPower(power);
     }
 
     public void raiseToPos(double pos, double power){
         lifter.setPower(power);
-        lifter.setTargetPosition((int) (pos / COUNTS_PER_INCH));
+        lifter.setTargetPosition((int) pos); // (pos / COUNTS_PER_INCH));
         toPosition();
     }
 

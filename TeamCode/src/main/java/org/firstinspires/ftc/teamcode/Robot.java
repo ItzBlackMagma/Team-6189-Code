@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -133,10 +134,10 @@ public class Robot {
         motor3 = hardwareMap.dcMotor.get("motor3");
         motor4 = hardwareMap.dcMotor.get("motor4");
 
-        motor1.setDirection(DcMotor.Direction.REVERSE);
-        motor2.setDirection(DcMotor.Direction.FORWARD);
-        motor3.setDirection(DcMotor.Direction.FORWARD);
-        motor4.setDirection(DcMotor.Direction.REVERSE);
+        motor1.setDirection(DcMotor.Direction.FORWARD); // Reverse
+        motor2.setDirection(DcMotor.Direction.REVERSE);
+        motor3.setDirection(DcMotor.Direction.REVERSE);
+        motor4.setDirection(DcMotor.Direction.FORWARD); // revers
 
         motor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
