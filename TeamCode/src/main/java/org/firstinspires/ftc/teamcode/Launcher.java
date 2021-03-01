@@ -9,8 +9,8 @@ public class Launcher {
     DcMotor spin,load,angle;
     Servo push;
 
-    private final double FIRE_POS = 1, RELOAD_POS = .8, ANGLE_CPR = 28;
-    public boolean isReady = true;
+    private final double FIRE_POS = 1, RELOAD_POS = .8, ANGLE_CPR = 28, MAX_ANGLE = 45;
+    private double power = 0;
 
     public void init(HardwareMap hm){
         load = hm.dcMotor.get("loader");
@@ -29,38 +29,32 @@ public class Launcher {
         angle.setDirection(DcMotorSimple.Direction.FORWARD);
 
         angle.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        angle.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         reload();
     }
 
-    public void fire(){
-        if(isReady) {
-            push.setPosition(FIRE_POS);
-            isReady = false;
+    public void fire(){push.setPosition(FIRE_POS);}
+
+    public void reload(){push.setPosition(RELOAD_POS);}
+
+    public void launch(double power){spin.setPower(power);}
+
+    public void load(double power){load.setPower(power);}
+
+    public void rotateToAngle(double theta, int inv){
+        int pos = (int) ((MAX_ANGLE) - (ANGLE_CPR * theta / 360));
+
+        if(angle.getCurrentPosition() < pos){
+            power *= inv;
+        } else if(angle.getCurrentPosition() > pos){
+            power *= -inv;
+        } else {
+            power = 0;
         }
     }
 
-    public void reload(){
-        push.setPosition(RELOAD_POS);
-        isReady = true;
-    }
+    public void rotateToAngle(double theta){rotateToAngle(theta,1);}
 
-    public void launch(double power){
-        spin.setPower(power);
-    }
-
-    public void load(double power){
-        load.setPower(power);
-    }
-
-    public void rotateToAngle(double theta, double power){
-        angle.setPower(power);
-        angle.setTargetPosition((int)((ANGLE_CPR * theta) / 360));
-        angle.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-    }
-
-    public void changeAngle(double power){
-        angle.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        angle.setPower(power);
-    }
+    public void setAnglePower(double power){this.power = power;}
 
 }
