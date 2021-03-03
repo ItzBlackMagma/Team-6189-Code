@@ -9,7 +9,7 @@ public class Launcher {
     DcMotor spin,load,angle;
     Servo push;
 
-    private final double FIRE_POS = 1, RELOAD_POS = .8, ANGLE_CPR = 28, MAX_ANGLE = 45;
+    private final double FIRE_POS = 1, RELOAD_POS = .8, ANGLE_CPR = 14, MAX_ANGLE = 45;
     private double power = 0;
 
     public void init(HardwareMap hm){
@@ -51,6 +51,7 @@ public class Launcher {
         } else {
             power = 0;
         }
+        angle.setPower(power);
     }
 
     public void rotateToAngle(double theta){rotateToAngle(theta,1);}

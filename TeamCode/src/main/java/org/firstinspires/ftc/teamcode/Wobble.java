@@ -25,6 +25,10 @@ public class Wobble {
 
     public void setPower(double power){this.power = power;}
 
+    public void liftPower(double power){
+        lifter.setPower(power);
+    }
+
     public void grip(double pos){gripper.setPosition(pos);}
 
     public void setPos(double pos, int inv){
