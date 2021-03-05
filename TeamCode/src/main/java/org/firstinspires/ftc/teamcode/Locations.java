@@ -25,5 +25,10 @@ public class Locations {
     public static final double ANGLE_TO_PSB = -Math.asin((7.5 + 4.25) / PSB_TO_STACK);
     public static final double ANGLE_TO_PSC = -Math.asin((7.5 * 2 + 4.25) / PSC_TO_STACK);
 
+    public static final double robotLaunchHeight = 5, HighGoalHeight = 36, PowerShotHeight = 32;
+
+    public static double distanceBetweenPoints(double start, double finish){
+        return  finish - start;
+    }
 
 }

@@ -9,7 +9,7 @@ public class Launcher {
     DcMotor spin,load,angle;
     Servo push;
 
-    private final double FIRE_POS = 1, RELOAD_POS = .8, ANGLE_CPR = 14, MAX_ANGLE = 45;
+    public final double FIRE_POS = 1, RELOAD_POS = .8, ANGLE_CPR = 28/2, MAX_ANGLE = 45, DegPerPulse = 360 / ANGLE_CPR, PulsesPerDeg = ANGLE_CPR / 360;
     private double power = 0;
 
     public void init(HardwareMap hm){
@@ -41,12 +41,10 @@ public class Launcher {
 
     public void load(double power){load.setPower(power);}
 
-    public void rotateToAngle(double theta, int inv){
-        int pos = (int) ((MAX_ANGLE) - (ANGLE_CPR * theta / 360));
-
-        if(angle.getCurrentPosition() < pos){
+    public void rotateToPos(double pos, int inv){
+        if(angle.getCurrentPosition() < pos - 1){
             power *= inv;
-        } else if(angle.getCurrentPosition() > pos){
+        } else if(angle.getCurrentPosition() > pos + 1){
             power *= -inv;
         } else {
             power = 0;
@@ -54,7 +52,9 @@ public class Launcher {
         angle.setPower(power);
     }
 
-    public void rotateToAngle(double theta){rotateToAngle(theta,1);}
+    public void rotateToAngle(double angle, int inv){rotateToPos(angle * PulsesPerDeg, inv);}
+
+    public double getAngle(){return  angle.getCurrentPosition() * DegPerPulse;}
 
     public void setAnglePower(double power){this.power = power;}
 

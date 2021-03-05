@@ -7,10 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 public class DriverControlled extends OpMode {
     Robot robot = new Robot(telemetry);
 
-    double x, y, r, p, spinPower;
-    final int wobblePos = (28 * 220) / 360;
-    final double robotLaunchHeight = 5, HighGoalHeight = 36, PowerShotHeight = 32;
-    boolean highGoal = true;
+    double x, y, r, p, spinPower, fireAngle = 0;
 
     @Override
     public void init() {
@@ -25,7 +22,8 @@ public class DriverControlled extends OpMode {
         controlLauncher();
         telemetry.addData("/> WOBBLE POS", robot.wobble.lifter.getCurrentPosition());
         telemetry.addData("/> FIRE POS", robot.launcher.angle.getCurrentPosition());
-        telemetry.addData("/> FIRE ANGLE", (robot.launcher.angle.getCurrentPosition() * 360 ) / 14);
+        telemetry.addData("/> FIRE ANGLE", robot.launcher.getAngle());
+        telemetry.addData("/> DESIRED FIRE ANGLE", fireAngle);
         telemetry.addData("/> SPIN POWER", spinPower);
         telemetry.update();
     }
@@ -50,28 +48,26 @@ public class DriverControlled extends OpMode {
         //-----------------------------------control the angle
         if (gamepad2.right_bumper) {
             robot.launcher.setAnglePower(0.1);
-            highGoal = true;
+            fireAngle = Math.atan((Locations.HighGoalHeight - Locations.robotLaunchHeight) / (Locations.GOAL_TO_STACK));
         } else if (gamepad2.left_bumper) {
             robot.launcher.setAnglePower(-0.1);
-            highGoal = false;
+            fireAngle = Math.atan((Locations.PowerShotHeight - Locations.robotLaunchHeight) / (Locations.GOAL_TO_STACK));
         } else {
             robot.launcher.setAnglePower(0);
         }
-        if (highGoal) {
-            robot.launcher.rotateToAngle(Math.atan((HighGoalHeight - robotLaunchHeight) / (Locations.GOAL_TO_STACK)));
-        } else {
-            robot.launcher.rotateToAngle(Math.atan((PowerShotHeight - robotLaunchHeight) / (Locations.GOAL_TO_STACK)), -1);
-       }
+        robot.launcher.rotateToAngle(fireAngle, 1);
 
         robot.launcher.load(gamepad2.right_stick_y); // loader speed
     }
 
     void controlWobble() {
         if (gamepad1.right_bumper) { // extend wobble arm
-            robot.wobble.liftPower(.1);
+            robot.wobble.lifter.setPower(.1);
+            robot.wobble.extend(0.1);
         } else if (gamepad1.left_bumper) { // fold wobble arm
-            robot.wobble.liftPower(-.1);
-        } else {robot.wobble.liftPower(0);}
+            robot.wobble.lifter.setPower(-.1);
+            robot.wobble.fold(0.1);
+        } else {robot.wobble.lifter.setPower(0);}
 
         if (gamepad1.x) { // grip wobble goal
             robot.wobble.grip(1);
