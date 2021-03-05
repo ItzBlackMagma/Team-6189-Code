@@ -42,14 +42,17 @@ public class Launcher {
     public void load(double power){load.setPower(power);}
 
     public void rotateToPos(double pos, int inv){
-        if(angle.getCurrentPosition() < pos - 1){
-            power *= inv;
-        } else if(angle.getCurrentPosition() > pos + 1){
-            power *= -inv;
-        } else {
-            power = 0;
-        }
+        // angle.setTargetPosition((int)pos);
         angle.setPower(power);
+
+//        if(angle.getCurrentPosition() < pos){
+//            power *= inv;
+//        } else if(angle.getCurrentPosition() > pos){
+//            power *= -inv;
+//        } else {
+//            power = 0;
+//        }
+//        angle.setPower(power);
     }
 
     public void rotateToAngle(double angle, int inv){rotateToPos(angle * PulsesPerDeg, inv);}

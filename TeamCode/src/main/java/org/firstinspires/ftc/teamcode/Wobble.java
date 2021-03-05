@@ -10,7 +10,7 @@ public class Wobble {
     DcMotor lifter;
     Servo gripper;
 
-    public final double PulsesPerDeg = 28/360, extendedAngle = 220, extendedPos = extendedAngle * PulsesPerDeg;
+    public final double PulsesPerDeg = 28/360, extendedAngle = 220, extendedPos = 202;// extendedAngle * PulsesPerDeg;
 
     public void init(HardwareMap hm){
         lifter = hm.dcMotor.get("wobble");
@@ -26,9 +26,20 @@ public class Wobble {
 
     public void grip(double pos){gripper.setPosition(pos);}
 
-    public void extend(double power){setPos(extendedPos, power);}
+    public void extend(double power){
+        lifter.setPower(power);
+        lifter.setTargetPosition((int) extendedPos);
+        lifter.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    // setPos(extendedPos, power);
+    }
 
-    public void fold(double power){setPos(0, power);}
+    public void fold(double power){
+
+        lifter.setPower(power);
+        lifter.setTargetPosition(0);
+        lifter.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+        // setPos(0, power);}
 
     public void setPos(double pos, double power){
         if(lifter.getCurrentPosition() < pos - 1){

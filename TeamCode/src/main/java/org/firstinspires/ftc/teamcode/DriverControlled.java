@@ -7,7 +7,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 public class DriverControlled extends OpMode {
     Robot robot = new Robot(telemetry);
 
-    double x, y, r, p, spinPower, fireAngle = 0;
+    double x, y, r, p, spinPower, fireAngle = 0, wobblePower = 0;
+    boolean isWobbleGrabbed = false;
 
     @Override
     public void init() {
@@ -44,36 +45,37 @@ public class DriverControlled extends OpMode {
         } else {
             robot.launcher.reload();
         }
+        telemetry.addData("/> SERVO POS", robot.launcher.push.getPosition());
 
         //-----------------------------------control the angle
         if (gamepad2.right_bumper) {
-            robot.launcher.setAnglePower(0.1);
+            robot.launcher.angle.setPower(0.1); // setAnglePower(0.1);
             fireAngle = Math.atan((Locations.HighGoalHeight - Locations.robotLaunchHeight) / (Locations.GOAL_TO_STACK));
         } else if (gamepad2.left_bumper) {
-            robot.launcher.setAnglePower(-0.1);
+            robot.launcher.angle.setPower(-0.1);// .setAnglePower(-0.1);
             fireAngle = Math.atan((Locations.PowerShotHeight - Locations.robotLaunchHeight) / (Locations.GOAL_TO_STACK));
         } else {
-            robot.launcher.setAnglePower(0);
+            robot.launcher.angle.setPower(0); //.setAnglePower(0);
         }
-        robot.launcher.rotateToAngle(fireAngle, 1);
+     //   robot.launcher.rotateToAngle(fireAngle, 1);
 
         robot.launcher.load(gamepad2.right_stick_y); // loader speed
     }
 
     void controlWobble() {
-        if (gamepad1.right_bumper) { // extend wobble arm
-            robot.wobble.lifter.setPower(.1);
-            robot.wobble.extend(0.1);
-        } else if (gamepad1.left_bumper) { // fold wobble arm
-            robot.wobble.lifter.setPower(-.1);
-            robot.wobble.fold(0.1);
-        } else {robot.wobble.lifter.setPower(0);}
-
-        if (gamepad1.x) { // grip wobble goal
-            robot.wobble.grip(1);
-        } else if (gamepad1.b) { // release wobble goal
+        if (gamepad2.dpad_down) { // grip wobble goal
             robot.wobble.grip(0);
+            isWobbleGrabbed = true;
+        } else if (gamepad2.dpad_up) { // release wobble goal
+            robot.wobble.grip(1);
+            isWobbleGrabbed = false;
         }
+        if(isWobbleGrabbed){
+            wobblePower = -gamepad2.left_stick_y * 0.8;
+        } else if(!isWobbleGrabbed) {
+            wobblePower = -gamepad2.left_stick_y * 0.3;
+        }
+        robot.wobble.lifter.setPower(wobblePower);
     }
 
     void controlMovement() {
