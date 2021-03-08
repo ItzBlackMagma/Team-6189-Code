@@ -90,7 +90,7 @@ public class Robot {
     }
 
     public double getRotation(){
-        return imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).thirdAngle;
+        return imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.RADIANS).thirdAngle;
     }
 
     public void init(HardwareMap hardwareMap){

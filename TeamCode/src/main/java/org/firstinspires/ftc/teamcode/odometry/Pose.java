@@ -15,10 +15,6 @@ public class Pose {
         this.setR(r);
     }
 
-    public static double imuToDegree(double angle){
-        return ((angle * 2) + 180);
-    }
-
     public double getX() {return x;}
 
     public void setX(double x) {this.x = x;}

@@ -34,11 +34,11 @@ public class Kinematics extends Thread {
     private void updatePosition(){
         xDis = xVelocity * (sleepTime * 1000);
         yDis = yVelocity * (sleepTime * 1000);
-        theta = 90 - robot.getRotation(); // gets the angle of the components
+        theta = (Math.PI / 2) - robot.getRotation(); // gets the angle of the components
 
         // turns the robot relative vectors to field oriented
-        GLOBAL_X = (xDis * Math.sin(90 - theta)) + (yDis * Math.cos(90 - theta));
-        GLOBAL_Y = (xDis * Math.cos(90 - theta)) + (yDis * Math.sin(90 - theta));
+        GLOBAL_X = (xDis * Math.sin(theta)) + (yDis * Math.cos(theta));
+        GLOBAL_Y = (xDis * Math.cos(theta)) + (yDis * Math.sin(theta));
 
         pose.update(GLOBAL_X - PREV_X, GLOBAL_Y - PREV_Y, robot.getRotation());
 
@@ -54,8 +54,8 @@ public class Kinematics extends Thread {
         motor4 = getMotorSpeed(robot.motor4.getCurrentPosition() - lastM4);
 
         // calculates the robot's velocities in x, y and r relative to the robot
-        xVelocity = (motor1 + motor2 + motor3 + motor4) * (R/4); // longitudinal component
-        yVelocity = (-motor1 + motor2 + motor3 - motor4) * (R/4); // transversal component
+        yVelocity = (motor1 + motor2 + motor3 + motor4) * (R/4); // longitudinal component (forward)
+        xVelocity = (-motor1 + motor2 + motor3 - motor4) * (R/4); // transversal component (sideways)
         rVelocity = (-motor1 + motor2 - motor3 + motor4) * (R/4); // angular component
 
         resultantVelocity = xVelocity + yVelocity + rVelocity; // the final velocity of the robot will be the sum of each component
@@ -69,6 +69,28 @@ public class Kinematics extends Thread {
 
     private double getMotorSpeed(int pos){ // returns meters per second
         return (pos * (1 / CPI)) / (sleepTime * 1000);
+    }
+
+    public void goToPosition(double x, double y, double speed){
+        double absoluteAngle = Math.atan2(y - GLOBAL_Y, x - GLOBAL_X);
+        double relativeAngle  = angleWrap(absoluteAngle - robot.getRotation());
+
+        double distance = Math.hypot(x - GLOBAL_X, y - GLOBAL_Y);
+
+        double relativeX = Math.cos(relativeAngle) * distance;
+        double relativeY = Math.sin(relativeAngle) * distance;
+
+        double v = Math.abs(relativeX) + Math.abs(relativeY);
+        double xPower = relativeX / v;
+        double yPower = relativeY / v;
+
+        robot.move(xPower, yPower, 0, speed);
+    }
+
+    public double angleWrap(double angle){
+        while(angle < -Math.PI) angle += 2*Math.PI;
+        while(angle > Math.PI) angle -= 2*Math.PI;
+        return angle;
     }
 
 }
