@@ -4,7 +4,7 @@ import org.firstinspires.ftc.teamcode.Robot;
 
 public class Kinematics extends Thread {
     private Robot robot;
-    public Pose pose = new Pose(0,0,0);
+    private Pose pose = new Pose(0,0,0);
 
     long sleepTime = 50; // in milliseconds
     public final double CPR = 28, CPI = 45, R = 4; // R is the radius of the wheel
@@ -13,7 +13,7 @@ public class Kinematics extends Thread {
     private double GLOBAL_X = 0, GLOBAL_Y = 0, PREV_X = 0, PREV_Y = 0;
     private int lastM1 = 0, lastM2 = 0, lastM3 = 0, lastM4 = 0;
 
-    public boolean isRunning = true;
+    public boolean isRunning = true, atPoint = false;
 
     public Kinematics(Robot robot){
         this.robot = robot;
@@ -32,15 +32,18 @@ public class Kinematics extends Thread {
     }
 
     private void updatePosition(){
-        xDis = xVelocity * (sleepTime * 1000);
-        yDis = yVelocity * (sleepTime * 1000);
-        theta = (Math.PI / 2) - robot.getRotation(); // gets the angle of the components
+//        xDis = xVelocity * (sleepTime * 1000);
+//        yDis = yVelocity * (sleepTime * 1000);
+//        theta = (Math.PI / 2) - robot.getRotation(); // gets the angle of the components
+//
+//        // turns the robot relative vectors to field oriented
+//        GLOBAL_X = (xDis * Math.sin(theta)) + (yDis * Math.cos(theta));
+//        GLOBAL_Y = (xDis * Math.cos(theta)) + (yDis * Math.sin(theta));
 
-        // turns the robot relative vectors to field oriented
-        GLOBAL_X = (xDis * Math.sin(theta)) + (yDis * Math.cos(theta));
-        GLOBAL_Y = (xDis * Math.cos(theta)) + (yDis * Math.sin(theta));
+        GLOBAL_Y = ((yVelocity * Math.cos(robot.getRotation())) + (xVelocity * Math.sin(robot.getRotation()))) * (sleepTime * 1000);
+        GLOBAL_X = ((yVelocity * Math.sin(robot.getRotation())) + (xVelocity * Math.cos(robot.getRotation()))) * (sleepTime * 1000);
 
-        pose.update(GLOBAL_X - PREV_X, GLOBAL_Y - PREV_Y, robot.getRotation());
+        getPose().update(GLOBAL_X - PREV_X, GLOBAL_Y - PREV_Y, robot.getRotation());
 
         PREV_X = GLOBAL_X;
         PREV_Y = GLOBAL_Y;
@@ -71,7 +74,7 @@ public class Kinematics extends Thread {
         return (pos * (1 / CPI)) / (sleepTime * 1000);
     }
 
-    public void goToPosition(double x, double y, double speed){
+    public void goToPosition(double x, double y, double speed, double error){
         double absoluteAngle = Math.atan2(y - GLOBAL_Y, x - GLOBAL_X);
         double relativeAngle  = angleWrap(absoluteAngle - robot.getRotation());
 
@@ -84,7 +87,13 @@ public class Kinematics extends Thread {
         double xPower = relativeX / v;
         double yPower = relativeY / v;
 
-        robot.move(xPower, yPower, 0, speed);
+        if (Math.abs(distance) > error) atPoint = false; else atPoint = true;
+
+        if (!atPoint) robot.move(xPower, yPower, 0, speed);
+    }
+
+    public void goToPosition(Waypoint w){
+        goToPosition(w.getX(), w.getY(), w.getSpeed(), w.getError());
     }
 
     public double angleWrap(double angle){
@@ -93,4 +102,19 @@ public class Kinematics extends Thread {
         return angle;
     }
 
+    public double getGLOBAL_X() {
+        return GLOBAL_X;
+    }
+
+    public double getGLOBAL_Y() {
+        return GLOBAL_Y;
+    }
+
+    public Pose getPose() {
+        return pose;
+    }
+
+    public void setPose(Pose pose) {
+        this.pose = pose;
+    }
 }

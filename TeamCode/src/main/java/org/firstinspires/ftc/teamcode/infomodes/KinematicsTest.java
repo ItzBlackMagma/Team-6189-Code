@@ -1,17 +1,17 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.infomodes;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.odometry.Kinematics;
 
-@TeleOp
+@TeleOp(group = "Info OpModes")
 public class KinematicsTest extends OpMode {
     Robot robot = new Robot(telemetry);
     Kinematics kinematics = new Kinematics(robot);
 
-    double x, y, r, p, spinPower, fireAngle = 0, wobblePower = 0;
-    boolean isWobbleGrabbed = false;
+    double x, y, r, p;
 
     @Override
     public void init() {
@@ -24,9 +24,9 @@ public class KinematicsTest extends OpMode {
     @Override
     public void loop() {
         controlMovement();
-        telemetry.addData("/> POSE X", kinematics.pose.getX());
-        telemetry.addData("/> POSE Y", kinematics.pose.getY());
-        telemetry.addData("/> POSE R", kinematics.pose.getR());
+        telemetry.addData("/> POSE X", kinematics.getPose().getX());
+        telemetry.addData("/> POSE Y", kinematics.getPose().getY());
+        telemetry.addData("/> POSE R", kinematics.getPose().getR());
         telemetry.update();
     }
 

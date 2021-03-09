@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import org.firstinspires.ftc.teamcode.odometry.Waypoint;
+
 public class Locations {
     // All measurements are in inches. Y is from the back wall to the goals. X is from the side wall to the other wall
     public static final double LAUNCH_LINE = 81;
