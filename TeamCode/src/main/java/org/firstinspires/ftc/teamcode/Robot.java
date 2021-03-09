@@ -51,6 +51,9 @@ public class Robot {
         motor4.setPower(power4 * power);
     }
 
+    /**
+     * Tells the robot to stop moving
+     */
     public void stop(){
         move(0,0,0,0);
     }
@@ -70,29 +73,18 @@ public class Robot {
         motor4.setTargetPosition((int) (pos4 * COUNTS_PER_INCH));
     }
 
-    public double getDirFromPos(int curPos, int desPos, double power){ // give a positive power
-        if ((desPos - curPos) > 1){
-            return power;
-        } else if ((desPos - curPos) < -1){
-            return  -power;
-        } else {
-            return 0;
-        }
-    }
-
-    public int[] getPos(){
-        int[] motorPos = new int[4];
-        motorPos[0] = motor1.getTargetPosition();
-        motorPos[1] = motor2.getTargetPosition();
-        motorPos[2] = motor3.getTargetPosition();
-        motorPos[3] = motor4.getTargetPosition();
-        return motorPos;
-    }
-
+    /**
+     * Uses the IMU to get the Z angle (heading) of the robot
+     * @return
+     */
     public double getRotation(){
         return imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.RADIANS).thirdAngle;
     }
 
+    /**
+     * Initializes all the hardware and configures it.
+     * @param hardwareMap
+     */
     public void init(HardwareMap hardwareMap){
         camera = new Camera(hardwareMap, telemetry);
         wobble = new Wobble();
@@ -107,12 +99,19 @@ public class Robot {
         initMotors(hardwareMap);
     }
 
+    /**
+     * The process that prepares the robot to stop
+     */
     public void shutdown(){
         stop();
         camera.shutdown();
         camera.deactivate();
     }
 
+    /**
+     * Called in the Init function to initialize and configure the IMU
+     * @param hardwareMap
+     */
     private void initIMU(HardwareMap hardwareMap){
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
@@ -128,16 +127,20 @@ public class Robot {
         telemetry.addData("/> INIT", "Imu Initialized");
     }
 
+    /**
+     * Called in the Init function to initialize and configure the IMU
+     * @param hardwareMap
+     */
     private void initMotors(HardwareMap hardwareMap){
         motor1 = hardwareMap.dcMotor.get("motor1");
         motor2 = hardwareMap.dcMotor.get("motor2");
         motor3 = hardwareMap.dcMotor.get("motor3");
         motor4 = hardwareMap.dcMotor.get("motor4");
 
-        motor1.setDirection(DcMotor.Direction.FORWARD); // Reverse
+        motor1.setDirection(DcMotor.Direction.FORWARD);
         motor2.setDirection(DcMotor.Direction.REVERSE);
         motor3.setDirection(DcMotor.Direction.REVERSE);
-        motor4.setDirection(DcMotor.Direction.FORWARD); // revers
+        motor4.setDirection(DcMotor.Direction.FORWARD);
 
         motor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -147,6 +150,9 @@ public class Robot {
         telemetry.addData("/> INIT", "Chassis Motors Initialized");
     }
 
+    /**
+     * Sets the chassis motors to run without encoders
+     */
     public void noEncoders(){
         motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -154,6 +160,9 @@ public class Robot {
         motor4.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
+    /**
+     * Sets the chassis motors to run to position
+     */
     public void toPosition(){
         motor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         motor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -161,6 +170,9 @@ public class Robot {
         motor4.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
+    /**
+     * Sets the chassis motors to run using encoders
+     */
     public void useEncoders(){
         motor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -168,6 +180,9 @@ public class Robot {
         motor4.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
+    /**
+     * Sets the chassis motors to stop and reset encoders
+     */
     public void resetEncoders(){
         motor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

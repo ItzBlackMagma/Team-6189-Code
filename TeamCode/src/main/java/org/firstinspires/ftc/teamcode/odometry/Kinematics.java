@@ -10,13 +10,17 @@ public class Kinematics extends Thread {
     public final double CPR = 28, CPI = 45, R = 4; // R is the radius of the wheel
     private double xPos = 0, yPos = 0, rotation = 0;
     private double motor1, motor2, motor3, motor4, xVelocity, yVelocity, rVelocity, resultantVelocity, xDis, yDis, theta;
-    private double GLOBAL_X = 0, GLOBAL_Y = 0, PREV_X = 0, PREV_Y = 0;
+    private double GLOBAL_X = 0, GLOBAL_Y = 0, PREV_X = 0, PREV_Y = 0, GLOBAL_R;
     private int lastM1 = 0, lastM2 = 0, lastM3 = 0, lastM4 = 0;
 
     public boolean isRunning = true, atPoint = false;
 
     public Kinematics(Robot robot){
         this.robot = robot;
+    }
+    public Kinematics(Robot robot, Pose startingPose){
+        this.robot = robot;
+        this.pose = startingPose;
     }
 
     public void run(){
@@ -42,8 +46,9 @@ public class Kinematics extends Thread {
 
         GLOBAL_Y = ((yVelocity * Math.cos(robot.getRotation())) + (xVelocity * Math.sin(robot.getRotation()))) * (sleepTime * 1000);
         GLOBAL_X = ((yVelocity * Math.sin(robot.getRotation())) + (xVelocity * Math.cos(robot.getRotation()))) * (sleepTime * 1000);
+        GLOBAL_R = robot.getRotation();
 
-        getPose().update(GLOBAL_X - PREV_X, GLOBAL_Y - PREV_Y, robot.getRotation());
+        getPose().update(GLOBAL_X - PREV_X, GLOBAL_Y - PREV_Y, GLOBAL_R);
 
         PREV_X = GLOBAL_X;
         PREV_Y = GLOBAL_Y;
@@ -74,7 +79,7 @@ public class Kinematics extends Thread {
         return (pos * (1 / CPI)) / (sleepTime * 1000);
     }
 
-    public void goToPosition(double x, double y, double speed, double error){
+    public void goToPosition(double x, double y, double angRad, double speed, double error){
         double absoluteAngle = Math.atan2(y - GLOBAL_Y, x - GLOBAL_X);
         double relativeAngle  = angleWrap(absoluteAngle - robot.getRotation());
 
@@ -89,11 +94,22 @@ public class Kinematics extends Thread {
 
         if (Math.abs(distance) > error) atPoint = false; else atPoint = true;
 
-        if (!atPoint) robot.move(xPower, yPower, 0, speed);
+        if (!atPoint) robot.move(xPower, yPower, rotateToAngle(angRad), speed);
+    }
+
+    public void goToPosition(double x, double y, double speed, double error){
+        goToPosition(x,y,GLOBAL_R,speed,error);
     }
 
     public void goToPosition(Waypoint w){
         goToPosition(w.getX(), w.getY(), w.getSpeed(), w.getError());
+    }
+
+    public double rotateToAngle(double angRad){
+        angRad = angleWrap(angRad - GLOBAL_R);
+        if(angRad > 0.2) return 1;
+        if(angRad < 0.2) return -1;
+        return 0;
     }
 
     public double angleWrap(double angle){
@@ -112,9 +128,5 @@ public class Kinematics extends Thread {
 
     public Pose getPose() {
         return pose;
-    }
-
-    public void setPose(Pose pose) {
-        this.pose = pose;
     }
 }
