@@ -13,29 +13,39 @@ public class NewAutonomous extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         robot.init(hardwareMap);
         robot.resetEncoders();
-        robot.toPosition();
         waitForStart();
 
         stackSize = robot.camera.stackSize();
         telemetry.addData("/> STACK SIZE", stackSize);
         telemetry.update();
+        stackSize = 0;
         sleep(100);
 
         switch (stackSize){  // move the first wobble goal
             case 0:
                 moveToPoint(Locations.WOBBLE_ZONE_A - 18, 4000);
+                //strafe(10, 0.5,1000);
+                //wobblePos(0.8, 100);
                 moveToPoint(-Locations.WOBBLE_ZONE_A + 18, 4000);
+                //strafe(10, 0.5,1000);
                 break;
             case 1:
                 moveToPoint(Locations.WOBBLE_ZONE_B - 18, 6000);
+                //strafe(10, 0.5,1000);
+                //wobblePos(0.8, 100);
                 moveToPoint(-Locations.WOBBLE_ZONE_B + 18, 6000);
+                //strafe(10, 0.5,1000);
                 break;
             case 4:
                 moveToPoint( Locations.WOBBLE_ZONE_C - 18, 7000);
+                //strafe(10, 0.5,1000);
+                //wobblePos(0.8, 100);
                 moveToPoint(-Locations.WOBBLE_ZONE_C + 18, 7000);
+                //strafe(10, 0.5,1000);
                 break;
         }
         moveToPoint(0, Locations.LINE_2 * .75, .08, 0, 2000); // navigate to the second wobble goal
+        strafe(Locations.LINE_2 * .75, 0.7, 1000);
 
         switch (stackSize) { // move the second wobble goal
             case 0:
@@ -51,15 +61,15 @@ public class NewAutonomous extends LinearOpMode {
                 moveToPoint(Locations.distanceBetweenPoints(Locations.WOBBLE_ZONE_C, Locations.WOBBLE_ZONE_A - 18), 7000);
                 break;
         }
-        moveToPoint(-50, 0.8, 4000);
-        robot.launcher.launch(.7);
+        strafe(-50, 0.8, 4000);
+        robot.launcher.launch(.5);
         for(int i=0;i<1000;i++) {
             robot.launcher.rotateToAngle(Math.atan(Locations.PowerShotHeight - Locations.robotLaunchHeight) /
                     (Locations.GOAL_TO_STACK - Locations.distanceBetweenPoints(Locations.WOBBLE_ZONE_A - 18, Locations.STARTER_STACK_Y)), 1);
         }
         for(int i=0;i<3;i++) {
             shoot(200);
-            moveToPoint(-5, 0.25, 1000);
+            strafe(-5, 0.25, 1000);
         }
         moveToPoint(18,1000);
     }
@@ -80,5 +90,11 @@ public class NewAutonomous extends LinearOpMode {
 
     void moveToPoint(double pos, long sleep){moveToPoint(pos, 0, 0, DEFAULT_SPEED, sleep);} // forward
 
-    void moveToPoint(double offset, double power, long sleep){moveToPoint(0, offset, power, 0, sleep);} // strafe
+    void strafe(double offset, double power, long sleep){moveToPoint(0, offset, power, 0, sleep);} // strafe
+
+    void wobblePos(double power, long sleep){
+        robot.wobble.lifter.setPower(power);
+        sleep(sleep);
+        robot.wobble.lifter.setPower(0);
+    }
 }

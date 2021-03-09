@@ -18,7 +18,7 @@ public class Launcher {
         angle = hm.dcMotor.get("angle");
         push = hm.get(Servo.class, "push");
 
-        spin.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        spin.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         spin.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         angle.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         angle.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

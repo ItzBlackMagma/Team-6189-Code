@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import static java.lang.Thread.sleep;
+
 @TeleOp
 public class DriverControlled extends OpMode {
     Robot robot = new Robot(telemetry);
@@ -14,6 +16,9 @@ public class DriverControlled extends OpMode {
     public void init() {
         robot.init(hardwareMap);
         robot.noEncoders();
+
+        // startup sequence
+        robot.wobble.grip(0);
     }
 
     @Override
@@ -25,7 +30,8 @@ public class DriverControlled extends OpMode {
         telemetry.addData("/> FIRE POS", robot.launcher.angle.getCurrentPosition());
         telemetry.addData("/> FIRE ANGLE", robot.launcher.getAngle());
         telemetry.addData("/> DESIRED FIRE ANGLE", fireAngle);
-        telemetry.addData("/> SPIN POWER", spinPower);
+        telemetry.addData("/> SPIN POWER", robot.launcher.spin.getPower());
+        // telemetry.addData("/> VOLTAGE", ControlHub_VoltageSensor.getVoltage());
         telemetry.update();
     }
 
@@ -34,7 +40,9 @@ public class DriverControlled extends OpMode {
             spinPower = .62;
         } else if (gamepad2.b) {
             spinPower = .565;
-        } else {
+        } else if(gamepad2.y){
+            spinPower = .1;
+        }else {
             spinPower = gamepad2.right_trigger;
         }
         robot.launcher.launch(spinPower);
@@ -50,10 +58,10 @@ public class DriverControlled extends OpMode {
         //-----------------------------------control the angle
         if (gamepad2.right_bumper) {
             robot.launcher.angle.setPower(0.1); // setAnglePower(0.1);
-            fireAngle = Math.atan((Locations.HighGoalHeight - Locations.robotLaunchHeight) / (Locations.GOAL_TO_STACK));
+            fireAngle = Math.toDegrees(Math.atan((Locations.HighGoalHeight - Locations.robotLaunchHeight) / (Locations.GOAL_TO_STACK)));
         } else if (gamepad2.left_bumper) {
             robot.launcher.angle.setPower(-0.1);// .setAnglePower(-0.1);
-            fireAngle = Math.atan((Locations.PowerShotHeight - Locations.robotLaunchHeight) / (Locations.GOAL_TO_STACK));
+            fireAngle = Math.toDegrees(Math.atan((Locations.PowerShotHeight - Locations.robotLaunchHeight) / (Locations.GOAL_TO_STACK)));
         } else {
             robot.launcher.angle.setPower(0); //.setAnglePower(0);
         }
