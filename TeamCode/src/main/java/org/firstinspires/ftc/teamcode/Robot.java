@@ -3,15 +3,15 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-
-import java.util.zip.CheckedOutputStream;
+import org.firstinspires.ftc.teamcode.modules.Camera;
+import org.firstinspires.ftc.teamcode.modules.Launcher;
+import org.firstinspires.ftc.teamcode.modules.Wobble;
 
 public class Robot {
 
@@ -75,7 +75,7 @@ public class Robot {
 
     /**
      * Uses the IMU to get the Z angle (heading) of the robot
-     * @return
+     * @return returns the z angle
      */
     public double getRotation(){
         return imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.RADIANS).thirdAngle;
@@ -110,7 +110,7 @@ public class Robot {
 
     /**
      * Called in the Init function to initialize and configure the IMU
-     * @param hardwareMap
+     * @param hardwareMap the hardware map given to the opmode
      */
     private void initIMU(HardwareMap hardwareMap){
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -129,7 +129,7 @@ public class Robot {
 
     /**
      * Called in the Init function to initialize and configure the IMU
-     * @param hardwareMap
+     * @param hardwareMap the hardware map given to the opmode
      */
     private void initMotors(HardwareMap hardwareMap){
         motor1 = hardwareMap.dcMotor.get("motor1");

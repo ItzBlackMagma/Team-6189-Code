@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.modules;
 
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -7,10 +7,10 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class Wobble {
-    DcMotor lifter;
-    Servo gripper;
+    public DcMotor lifter;
+    public Servo gripper;
 
-    public final double PulsesPerDeg = 28/360, extendedAngle = 220, extendedPos = 202;// extendedAngle * PulsesPerDeg;
+    public final double PulsesPerDeg = 28.0/360.0, extendedAngle = 220, extendedPos = 202;// extendedAngle * PulsesPerDeg;
 
     public void init(HardwareMap hm){
         lifter = hm.dcMotor.get("wobble");

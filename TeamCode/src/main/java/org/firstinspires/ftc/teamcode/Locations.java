@@ -29,6 +29,8 @@ public class Locations {
 
     public static final double robotLaunchHeight = 5, HighGoalHeight = 36, PowerShotHeight = 32;
 
+    public static final double fieldLength = 144;
+
     public static double distanceBetweenPoints(double start, double finish){
         return  finish - start;
     }

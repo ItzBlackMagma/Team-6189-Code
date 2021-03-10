@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.infomodes;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.Locations;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.odometry.Kinematics;
 
@@ -11,7 +12,7 @@ public class KinematicsTest extends OpMode {
     Robot robot = new Robot(telemetry);
     Kinematics kinematics = new Kinematics(robot);
 
-    double x, y, r, p;
+    double x, y, r, p, fireAngle = 0;
 
     @Override
     public void init() {
@@ -24,7 +25,14 @@ public class KinematicsTest extends OpMode {
     @Override
     public void loop() {
         controlMovement();
-        kinematics.getPose().printPose(telemetry); // x,y,r
+        robot.launcher.setSpinSpeed(90, .7);
+        if(gamepad1.x){
+            fireAngle = Math.toDegrees(Math.atan((Locations.PowerShotHeight - Locations.robotLaunchHeight) / (Locations.fieldLength - kinematics.getGLOBAL_Y())));
+        } else if (gamepad1.y) {
+            fireAngle = Math.toDegrees(Math.atan((Locations.HighGoalHeight - Locations.robotLaunchHeight) / Locations.fieldLength - kinematics.getGLOBAL_Y()));
+        }
+
+        kinematics.getPose().printPose(telemetry); // x, y, r
         telemetry.addData("/> GLOBAL X", kinematics.getGLOBAL_X());
         telemetry.addData("/> GLOBAL Y", kinematics.getGLOBAL_Y());
         telemetry.addData("/> ROTATION", robot.getRotation());
@@ -32,6 +40,8 @@ public class KinematicsTest extends OpMode {
         telemetry.addData("/> GLOBAL VELOCITY X", kinematics.gVelocityX);
         telemetry.addData("/> GLOBAL VELOCITY Y", kinematics.gVelocityY);
         telemetry.addData("/> AT POINT", kinematics.atPoint);
+        telemetry.addData("/> SPIN SPEED", robot.launcher.getSpinSpeed());
+        telemetry.addData("/> DESIRED FIRE ANGLE", fireAngle);
         telemetry.update();
     }
 

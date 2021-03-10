@@ -9,7 +9,7 @@ public class FirstAuto extends LinearOpMode {
     int stackSize = 0;
 
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode() {
 
         // init phase
         robot.init(hardwareMap);
@@ -137,7 +137,7 @@ public class FirstAuto extends LinearOpMode {
         sleep(500);
 
         // fire rings
-        robot.launcher.launch(0.62);
+        robot.launcher.spinPower(0.62);
         sleep(2000);
         setLoaderPower(1, 400);
         robot.move(-1,0,0,.5);
@@ -145,7 +145,7 @@ public class FirstAuto extends LinearOpMode {
         robot.stop();
         sleep(2000);
         setLoaderPower(1, 1000);
-        robot.launcher.launch(0);
+        robot.launcher.spinPower(0);
 
         // park on launch line
         robot.move(0,1, 0, .75);
@@ -154,9 +154,9 @@ public class FirstAuto extends LinearOpMode {
     }
 
     public void setLoaderPower(double power, long ms){
-        robot.launcher.load(-power);
+        robot.launcher.loadPower(-power);
         sleep(ms);
-        robot.launcher.load(0);
+        robot.launcher.loadPower(0);
     }
 
 }

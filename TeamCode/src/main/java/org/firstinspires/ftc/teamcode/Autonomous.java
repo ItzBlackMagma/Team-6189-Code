@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.presets.Presets;
+
 public class Autonomous extends LinearOpMode {
     Robot robot = new Robot(telemetry);
     Presets presets = new Presets(robot);
@@ -9,7 +11,7 @@ public class Autonomous extends LinearOpMode {
     int stackSize;
 
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode() {
         // init phase
         robot.init(hardwareMap);
         sleep(1000);

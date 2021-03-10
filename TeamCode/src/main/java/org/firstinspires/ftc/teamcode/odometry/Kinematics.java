@@ -28,6 +28,8 @@ public class Kinematics extends Thread {
         while (isRunning) {
             updateRobotVelocity();
             updatePosition();
+            robot.launcher.updateSpinSpeed(50);
+
             try {
                 Thread.sleep(sleepTime);
             } catch (InterruptedException e) {

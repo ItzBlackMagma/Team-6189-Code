@@ -14,7 +14,7 @@ public class EncoderAutonomous extends LinearOpMode {
     long waitTime = 7000;
 
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode() {
         robot.init(hardwareMap);
         robot.resetEncoders();
         robot.stop();
@@ -46,10 +46,10 @@ public class EncoderAutonomous extends LinearOpMode {
         runToPosition(goal, goal, goal, goal, 0.8);
         sleep(waitTime);
 
-        robot.launcher.launch(0.70);
+        robot.launcher.spinPower(0.70);
         sleep(2000);
         setLoaderPower(1,4000);
-        robot.launcher.launch(0);
+        robot.launcher.spinPower(0);
 
         goal = 10;
         runToPosition(goal,goal,goal,goal,0.8);
@@ -100,9 +100,9 @@ public class EncoderAutonomous extends LinearOpMode {
     }
 
     public void setLoaderPower(double power, long ms){
-        robot.launcher.load(-power);
+        robot.launcher.loadPower(-power);
         sleep(ms);
-        robot.launcher.load(0);
+        robot.launcher.loadPower(0);
     }
 
 }

@@ -10,7 +10,7 @@ public class NewAutonomous extends LinearOpMode {
     int stackSize = 0;
 
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode() {
         robot.init(hardwareMap);
         robot.resetEncoders();
         waitForStart();
@@ -62,7 +62,7 @@ public class NewAutonomous extends LinearOpMode {
                 break;
         }
         strafe(-50, 0.8, 4000);
-        robot.launcher.launch(.5);
+        robot.launcher.spinPower(.5);
         for(int i=0;i<1000;i++) {
             robot.launcher.rotateToAngle(Math.atan(Locations.PowerShotHeight - Locations.robotLaunchHeight) /
                     (Locations.GOAL_TO_STACK - Locations.distanceBetweenPoints(Locations.WOBBLE_ZONE_A - 18, Locations.STARTER_STACK_Y)), 1);

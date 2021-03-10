@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.modules;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -6,11 +6,13 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class Launcher {
-    DcMotor spin,load,angle;
-    Servo push;
+    public DcMotor spin,load,angle;
+    public Servo push;
 
-    public final double FIRE_POS = 1, RELOAD_POS = .8, ANGLE_CPR = 28/2, MAX_ANGLE = 45, DegPerPulse = 360 / ANGLE_CPR, PulsesPerDeg = ANGLE_CPR / 360;
+    public final double FIRE_POS = 1, RELOAD_POS = .8, ANGLE_CPR = 14, MAX_ANGLE = 45, DegPerPulse = 360 / ANGLE_CPR, PulsesPerDeg = ANGLE_CPR / 360;
     private double power = 0;
+    private double lastSpinPos = 0;
+    private double spinSpeed = 0;
 
     public void init(HardwareMap hm){
         load = hm.dcMotor.get("loader");
@@ -37,9 +39,15 @@ public class Launcher {
 
     public void reload(){push.setPosition(RELOAD_POS);}
 
-    public void launch(double power){spin.setPower(power);}
+    public void spinPower(double power){spin.setPower(power);}
 
-    public void load(double power){load.setPower(power);}
+    public void loadPower(double power){load.setPower(power);}
+
+    public void updateSpinSpeed(long time){
+        double theta = ((spin.getCurrentPosition() - lastSpinPos) / 28) * 360;
+        lastSpinPos = spin.getCurrentPosition();
+        spinSpeed = (2 * theta) / (time * 1000); // 2 is the radius of the flywheel and is measured in inches
+    }
 
     public void rotateToPos(double pos, int inv){
         // angle.setTargetPosition((int)pos);
@@ -61,4 +69,12 @@ public class Launcher {
 
     public void setAnglePower(double power){this.power = power;}
 
+    public double getSpinSpeed() {
+        return spinSpeed;
+    }
+
+    public void setSpinSpeed(double spinSpeed, double power) {
+        power *= (spinSpeed - this.spinSpeed) > 0 ? 1 : -1;
+        spin.setPower(power);
+    }
 }

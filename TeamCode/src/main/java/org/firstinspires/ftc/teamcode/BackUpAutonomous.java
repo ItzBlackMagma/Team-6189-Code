@@ -8,14 +8,14 @@ public class BackUpAutonomous extends LinearOpMode {
     Robot robot = new Robot(telemetry);
 
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode() {
         robot.init(hardwareMap);
         robot.resetEncoders();
         waitForStart();
 
         moveToPoint(Locations.LAUNCH_LINE, 4000);
         moveToPoint(-20, 2000);
-        robot.launcher.launch(0.7);
+        robot.launcher.spinPower(0.7);
         sleep(5000);
         for (int i = 0; i < 3; i++) {
             robot.launcher.fire();
@@ -23,7 +23,7 @@ public class BackUpAutonomous extends LinearOpMode {
             robot.launcher.reload();
         }
 
-        robot.launcher.launch(0);
+        robot.launcher.spinPower(0);
         sleep(4000);
         moveToPoint(20, 2000);
         robot.stop();

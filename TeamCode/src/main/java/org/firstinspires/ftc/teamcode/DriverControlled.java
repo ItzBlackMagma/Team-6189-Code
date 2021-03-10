@@ -45,7 +45,7 @@ public class DriverControlled extends OpMode {
         }else {
             spinPower = gamepad2.right_trigger;
         }
-        robot.launcher.launch(spinPower);
+        robot.launcher.spinPower(spinPower);
 
         //---------------------------------push the ring into the spinner
         if (gamepad2.a) {
@@ -67,7 +67,7 @@ public class DriverControlled extends OpMode {
         }
      //   robot.launcher.rotateToAngle(fireAngle, 1);
 
-        robot.launcher.load(gamepad2.right_stick_y); // loader speed
+        robot.launcher.loadPower(gamepad2.right_stick_y); // loader speed
     }
 
     void controlWobble() {
