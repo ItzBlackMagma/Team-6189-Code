@@ -15,6 +15,12 @@ public class Pose {
         this.setR(r);
     }
 
+    public void setLocation(double x, double y, double r){
+        this.setX(x);
+        this.setY(y);
+        this.setR(r);
+    }
+
     public double getX() {return x;}
 
     public void setX(double x) {this.x = x;}

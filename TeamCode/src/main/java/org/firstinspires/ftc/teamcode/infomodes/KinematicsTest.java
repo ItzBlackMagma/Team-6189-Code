@@ -24,9 +24,12 @@ public class KinematicsTest extends OpMode {
     @Override
     public void loop() {
         controlMovement();
+        telemetry.addData("/> GLOBAL X", kinematics.getGLOBAL_X());
+        telemetry.addData("/> GLOBAL Y", kinematics.getGLOBAL_Y());
+        telemetry.addData("/> POSE R", kinematics.getPose().getR());
         telemetry.addData("/> POSE X", kinematics.getPose().getX());
         telemetry.addData("/> POSE Y", kinematics.getPose().getY());
-        telemetry.addData("/> POSE R", kinematics.getPose().getR());
+        telemetry.addData("/> ROTATION", robot.getRotation());
         telemetry.update();
     }
 

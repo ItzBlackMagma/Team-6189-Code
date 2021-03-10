@@ -48,7 +48,8 @@ public class Kinematics extends Thread {
         GLOBAL_X = ((yVelocity * Math.sin(robot.getRotation())) + (xVelocity * Math.cos(robot.getRotation()))) * (sleepTime * 1000);
         GLOBAL_R = robot.getRotation();
 
-        getPose().update(GLOBAL_X - PREV_X, GLOBAL_Y - PREV_Y, GLOBAL_R);
+        // getPose().update(GLOBAL_X - PREV_X, GLOBAL_Y - PREV_Y, GLOBAL_R);
+        pose.setLocation(GLOBAL_X, GLOBAL_Y,GLOBAL_R);
 
         PREV_X = GLOBAL_X;
         PREV_Y = GLOBAL_Y;
@@ -94,7 +95,7 @@ public class Kinematics extends Thread {
 
         if (Math.abs(distance) > error) atPoint = false; else atPoint = true;
 
-        if (!atPoint) robot.move(xPower, yPower, rotateToAngle(angRad), speed);
+        if (!atPoint) robot.move(xPower, yPower, 0, speed);
     }
 
     public void goToPosition(double x, double y, double speed, double error){
@@ -124,6 +125,10 @@ public class Kinematics extends Thread {
 
     public double getGLOBAL_Y() {
         return GLOBAL_Y;
+    }
+
+    public double getGLOBAL_R() {
+        return GLOBAL_R;
     }
 
     public Pose getPose() {
