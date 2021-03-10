@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode.odometry;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
+import java.util.Arrays;
+
 public class Waypoint extends Pose {
 
     private double speed, error, angleAtPoint;
@@ -24,5 +28,10 @@ public class Waypoint extends Pose {
 
     public double getError() {
         return error;
+    }
+
+    public void printWaypoint(Telemetry telemetry){
+        double[] pointInfo = {getX(), getY(), getR(), getSpeed(), getError()};
+        telemetry.addData("/> WAYPOINT", Arrays.toString(pointInfo));
     }
 }

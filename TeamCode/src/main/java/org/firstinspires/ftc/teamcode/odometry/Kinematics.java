@@ -9,9 +9,10 @@ public class Kinematics extends Thread {
     long sleepTime = 50; // in milliseconds
     public final double CPR = 28, CPI = 45, R = 4; // R is the radius of the wheel
     private double xPos = 0, yPos = 0, rotation = 0;
-    private double motor1, motor2, motor3, motor4, xVelocity, yVelocity, rVelocity, resultantVelocity, xDis, yDis, theta;
-    private double GLOBAL_X = 0, GLOBAL_Y = 0, PREV_X = 0, PREV_Y = 0, GLOBAL_R;
+    private double motor1, motor2, motor3, motor4, xVelocity, yVelocity, rVelocity, xDis, yDis, theta;
+    private double GLOBAL_X = 0, GLOBAL_Y = 0, GLOBAL_R;
     private int lastM1 = 0, lastM2 = 0, lastM3 = 0, lastM4 = 0;
+    public double gVelocityX = 0, gVelocityY = 0;
 
     public boolean isRunning = true, atPoint = false;
 
@@ -36,23 +37,14 @@ public class Kinematics extends Thread {
     }
 
     private void updatePosition(){
-//        xDis = xVelocity * (sleepTime * 1000);
-//        yDis = yVelocity * (sleepTime * 1000);
-//        theta = (Math.PI / 2) - robot.getRotation(); // gets the angle of the components
-//
-//        // turns the robot relative vectors to field oriented
-//        GLOBAL_X = (xDis * Math.sin(theta)) + (yDis * Math.cos(theta));
-//        GLOBAL_Y = (xDis * Math.cos(theta)) + (yDis * Math.sin(theta));
+        gVelocityY = (yVelocity * Math.cos(robot.getRotation())) + (xVelocity * Math.sin(robot.getRotation()));
+        gVelocityX = (yVelocity * Math.sin(robot.getRotation())) + (xVelocity * Math.cos(robot.getRotation()));
 
-        GLOBAL_Y = ((yVelocity * Math.cos(robot.getRotation())) + (xVelocity * Math.sin(robot.getRotation()))) * (sleepTime * 1000);
-        GLOBAL_X = ((yVelocity * Math.sin(robot.getRotation())) + (xVelocity * Math.cos(robot.getRotation()))) * (sleepTime * 1000);
+        GLOBAL_Y += (gVelocityY) * (sleepTime * 1000);
+        GLOBAL_X += (gVelocityX) * (sleepTime * 1000);
         GLOBAL_R = robot.getRotation();
 
-        // getPose().update(GLOBAL_X - PREV_X, GLOBAL_Y - PREV_Y, GLOBAL_R);
-        pose.setLocation(GLOBAL_X, GLOBAL_Y,GLOBAL_R);
-
-        PREV_X = GLOBAL_X;
-        PREV_Y = GLOBAL_Y;
+        pose.setLocation(GLOBAL_X, GLOBAL_Y, GLOBAL_R);
     }
 
     private void updateRobotVelocity(){
@@ -67,8 +59,6 @@ public class Kinematics extends Thread {
         xVelocity = (-motor1 + motor2 + motor3 - motor4) * (R/4); // transversal component (sideways)
         rVelocity = (-motor1 + motor2 - motor3 + motor4) * (R/4); // angular component
 
-        resultantVelocity = xVelocity + yVelocity + rVelocity; // the final velocity of the robot will be the sum of each component
-
         // reset the last motor positions
         lastM1 = robot.motor1.getCurrentPosition();
         lastM2 = robot.motor2.getCurrentPosition();
@@ -76,7 +66,7 @@ public class Kinematics extends Thread {
         lastM4 = robot.motor4.getCurrentPosition();
     }
 
-    private double getMotorSpeed(int pos){ // returns meters per second
+    private double getMotorSpeed(int pos){ // returns inches per second
         return (pos * (1 / CPI)) / (sleepTime * 1000);
     }
 
@@ -93,7 +83,7 @@ public class Kinematics extends Thread {
         double xPower = relativeX / v;
         double yPower = relativeY / v;
 
-        if (Math.abs(distance) > error) atPoint = false; else atPoint = true;
+        atPoint = Math.abs(distance) <= error;
 
         if (!atPoint) robot.move(xPower, yPower, 0, speed);
     }
@@ -108,8 +98,8 @@ public class Kinematics extends Thread {
 
     public double rotateToAngle(double angRad){
         angRad = angleWrap(angRad - GLOBAL_R);
-        if(angRad > 0.2) return 1;
-        if(angRad < 0.2) return -1;
+        if(angRad > 1) return 1;
+        if(angRad < -1) return -1;
         return 0;
     }
 

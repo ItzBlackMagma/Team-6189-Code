@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode.odometry;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
+import java.util.Arrays;
+
 public class Pose {
     private double x = 0;
     private double y = 0;
@@ -32,4 +36,9 @@ public class Pose {
     public double getR() {return r;}
 
     public void setR(double r) {this.r = r;}
+
+    public void printPose(Telemetry telemetry){
+        double[] poseInfo = {x,y,r};
+        telemetry.addData("/> POSE", Arrays.toString(poseInfo));
+    }
 }
