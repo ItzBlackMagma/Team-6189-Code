@@ -6,11 +6,11 @@ public class Kinematics extends Thread {
     private Robot robot;
     private Pose pose = new Pose(0,0,0);
 
-    long sleepTime = 50; // in milliseconds
+    long sleepTime = 100; // in milliseconds
     public final double CPR = 28, CPI = 45, R = 4; // R is the radius of the wheel
     private double xPos = 0, yPos = 0, rotation = 0;
     private double motor1, motor2, motor3, motor4, xVelocity, yVelocity, rVelocity, xDis, yDis, theta;
-    private double GLOBAL_X = 0, GLOBAL_Y = 0, GLOBAL_R;
+    private double GLOBAL_X = 0, GLOBAL_Y = 0, GLOBAL_R, LAST_GLOBAL_X = 0, LAST_GLOBAL_Y = 0;
     private int lastM1 = 0, lastM2 = 0, lastM3 = 0, lastM4 = 0;
     public double gVelocityX = 0, gVelocityY = 0;
 
@@ -28,7 +28,7 @@ public class Kinematics extends Thread {
         while (isRunning) {
             updateRobotVelocity();
             updatePosition();
-            robot.launcher.updateSpinSpeed(50);
+            robot.launcher.updateSpinSpeed(sleepTime);
 
             try {
                 Thread.sleep(sleepTime);
@@ -42,11 +42,14 @@ public class Kinematics extends Thread {
         gVelocityY = (yVelocity * Math.cos(robot.getRotation())) + (xVelocity * Math.sin(robot.getRotation()));
         gVelocityX = (yVelocity * Math.sin(robot.getRotation())) + (xVelocity * Math.cos(robot.getRotation()));
 
-        GLOBAL_Y += (gVelocityY) * (sleepTime * 1000);
-        GLOBAL_X += (gVelocityX) * (sleepTime * 1000);
+        GLOBAL_Y = (gVelocityY) * (sleepTime * 1000) + LAST_GLOBAL_Y;
+        GLOBAL_X = (gVelocityX) * (sleepTime * 1000) + LAST_GLOBAL_X;
         GLOBAL_R = robot.getRotation();
 
         pose.setLocation(GLOBAL_X, GLOBAL_Y, GLOBAL_R);
+
+        LAST_GLOBAL_X = GLOBAL_X;
+        LAST_GLOBAL_Y = GLOBAL_Y;
     }
 
     private void updateRobotVelocity(){
@@ -58,8 +61,8 @@ public class Kinematics extends Thread {
 
         // calculates the robot's velocities in x, y and r relative to the robot
         yVelocity = (motor1 + motor2 + motor3 + motor4) * (R/4); // longitudinal component (forward)
-        xVelocity = (-motor1 + motor2 + motor3 - motor4) * (R/4); // transversal component (sideways)
-        rVelocity = (-motor1 + motor2 - motor3 + motor4) * (R/4); // angular component
+        rVelocity = (-motor1 + motor2 + motor3 - motor4) * (R/4); // angular component
+        xVelocity = (-motor1 + motor2 - motor3 + motor4) * (R/4); // transversal component (sideways)
 
         // reset the last motor positions
         lastM1 = robot.motor1.getCurrentPosition();
@@ -88,6 +91,7 @@ public class Kinematics extends Thread {
         atPoint = Math.abs(distance) <= error;
 
         if (!atPoint) robot.move(xPower, yPower, 0, speed);
+        else robot.stop();
     }
 
     public void goToPosition(double x, double y, double speed, double error){

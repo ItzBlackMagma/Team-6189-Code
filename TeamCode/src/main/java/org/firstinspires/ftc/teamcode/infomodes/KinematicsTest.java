@@ -17,8 +17,8 @@ public class KinematicsTest extends OpMode {
     @Override
     public void init() {
         robot.init(hardwareMap);
+        robot.resetEncoders();
         robot.noEncoders();
-
         kinematics.start();
     }
 
@@ -30,6 +30,8 @@ public class KinematicsTest extends OpMode {
             fireAngle = Math.toDegrees(Math.atan((Locations.PowerShotHeight - Locations.robotLaunchHeight) / (Locations.fieldLength - kinematics.getGLOBAL_Y())));
         } else if (gamepad1.y) {
             fireAngle = Math.toDegrees(Math.atan((Locations.HighGoalHeight - Locations.robotLaunchHeight) / Locations.fieldLength - kinematics.getGLOBAL_Y()));
+        } else if(gamepad1.dpad_up){
+            robot.launcher.setSpinSpeed(500, .7);
         }
 
         kinematics.getPose().printPose(telemetry); // x, y, r
