@@ -74,7 +74,7 @@ public class Launcher {
     }
 
     public void setSpinSpeed(double spinSpeed, double power) {
-        power *= (spinSpeed - this.spinSpeed) > 0 ? 1 : -1;
+        power *= (spinSpeed - this.spinSpeed) > 0 ? 1: -1;
         spin.setPower(power);
     }
 }
