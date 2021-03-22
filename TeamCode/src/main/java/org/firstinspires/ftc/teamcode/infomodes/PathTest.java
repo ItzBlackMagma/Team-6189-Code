@@ -18,14 +18,15 @@ public class PathTest extends LinearOpMode {
     @Override
     public void runOpMode() {
         robot.init(hardwareMap);
-        path.addWaypoint(new Waypoint(0, 2, 0, 0.8, 1)); // meters ? inches
-        // path.addWaypoint(new Waypoint(2, 2, 0, 0.4, 2.56 / 100));
+        k.start();
+        path.addWaypoint(new Waypoint(0, 20, 0, 0.4, 1)); // meters ? inches
+        path.addWaypoint(new Waypoint(20, 20, 0, 0.4, 1));
         // path.addWaypoint(new Waypoint(1.5, 1, 0, 0.8, 2.56 / 100));
         robot.resetEncoders();
         robot.noEncoders();
         waitForStart();
 
-        path.followPath(k);
+        path.followPath(k,this,1000);
         telemetry.addData("/> PATH", "COMPLETED");
         robot.stop();
     }

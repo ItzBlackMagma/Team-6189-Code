@@ -7,7 +7,7 @@ public class Kinematics extends Thread {
     private Pose pose = new Pose(0,0,0);
 
     long sleepTime = 100; // in milliseconds
-    public final double CPR = 28, CPI = 45, R = 4; // R is the radius of the wheel
+    public final double CPR = 28, CPI = 45 * 3, R = 4; // R is the radius of the wheel
     private double xPos = 0, yPos = 0, rotation = 0;
     private double motor1, motor2, motor3, motor4, xVelocity, yVelocity, rVelocity, xDis, yDis, theta;
     private double GLOBAL_X = 0, GLOBAL_Y = 0, GLOBAL_R, LAST_GLOBAL_X = 0, LAST_GLOBAL_Y = 0;
@@ -62,7 +62,7 @@ public class Kinematics extends Thread {
         // calculates the robot's velocities in x, y and r relative to the robot
         yVelocity = (motor1 + motor2 + motor3 + motor4) * (R/4); // longitudinal component (forward)
         rVelocity = (-motor1 + motor2 + motor3 - motor4) * (R/4); // angular component
-        xVelocity = (-motor1 + motor2 - motor3 + motor4) * (R/4); // transversal component (sideways)
+        xVelocity = -(-motor1 + motor2 - motor3 + motor4) * (R/4); // transversal component (sideways)
 
         // reset the last motor positions
         lastM1 = robot.motor1.getCurrentPosition();
@@ -72,7 +72,7 @@ public class Kinematics extends Thread {
     }
 
     private double getMotorSpeed(int pos){ // returns inches per second
-        return (pos * (1 / CPI)) / (sleepTime * 1000);
+        return (pos / (CPI)) / (sleepTime * 1000);
     }
 
     public void goToPosition(double x, double y, double angRad, double speed, double error){

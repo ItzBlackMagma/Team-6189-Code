@@ -31,7 +31,7 @@ public class KinematicsTest extends OpMode {
         } else if (gamepad1.y) {
             fireAngle = Math.toDegrees(Math.atan((Locations.HighGoalHeight - Locations.robotLaunchHeight) / Locations.fieldLength - kinematics.getGLOBAL_Y()));
         } else if(gamepad1.dpad_up){
-            robot.launcher.setSpinSpeed(500, .7);
+            robot.launcher.setSpinSpeed(500, .8);
         }
 
         kinematics.getPose().printPose(telemetry); // x, y, r
