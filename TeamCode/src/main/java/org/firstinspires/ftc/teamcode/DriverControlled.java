@@ -9,7 +9,7 @@ import static java.lang.Thread.sleep;
 public class DriverControlled extends OpMode {
     Robot robot = new Robot(telemetry);
 
-    double x, y, r, p, spinPower, fireAngle = 0, wobblePower = 0;
+    double x, y, r, p, spinPower, fireAngle = 0, wobblePower = 0, fireAngle <= 0, fireAngle >= 142;
     boolean isWobbleGrabbed = false;
 
     @Override
