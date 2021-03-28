@@ -15,7 +15,7 @@ public class DriverControlled extends OpMode {
     @Override
     public void init() {
         robot.init(hardwareMap);
-        robot.noEncoders();
+        //robot.noEncoders();
 
         // startup sequence
         robot.wobble.grip(0);
